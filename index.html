@@ -3,118 +3,82 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>Program Gym — Jadwal & Rekap</title>
+<title>Program Gym — Latihan, Kalori & Rekap</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#17181A;
-    --panel:#212226;
-    --panel-2:#2A2B30;
-    --chalk:#EDEAE2;
-    --chalk-dim:#948F87;
-    --steel:#6E8FA3;
-    --steel-dim:#3F5361;
-    --tape:#E8B23C;
-    --tape-dim:#5A491F;
-    --rust:#B55A3A;
-    --rust-dim:#4A2A1D;
+    --ink:#17181A; --panel:#212226; --panel-2:#2A2B30;
+    --chalk:#EDEAE2; --chalk-dim:#948F87;
+    --steel:#6E8FA3; --steel-dim:#3F5361;
+    --tape:#E8B23C; --tape-dim:#5A491F;
+    --rust:#B55A3A; --rust-dim:#4A2A1D;
+    --leaf:#7FA37C;
     --line:#34353A;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;background:var(--ink);color:var(--chalk);}
-  body{
-    font-family:'Inter',sans-serif;
-    padding-bottom:86px;
-    min-height:100vh;
-    -webkit-font-smoothing:antialiased;
-  }
+  body{font-family:'Inter',sans-serif;padding-bottom:86px;min-height:100vh;-webkit-font-smoothing:antialiased;}
   .mono{font-family:'IBM Plex Mono',monospace;}
 
-  /* ---- Header ---- */
-  header.top{
-    position:sticky;top:0;z-index:20;
-    background:var(--ink);
-    padding:18px 18px 12px;
-    border-bottom:1px solid var(--line);
-  }
+  header.top{position:sticky;top:0;z-index:20;background:var(--ink);padding:18px 18px 12px;border-bottom:1px solid var(--line);}
   .brand-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
   .brand{display:flex;flex-direction:column;line-height:1;}
   .brand .kicker{font-size:11px;color:var(--chalk-dim);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:5px;}
   .brand .name{font-family:'Oswald',sans-serif;font-weight:700;font-size:22px;letter-spacing:0.01em;text-transform:uppercase;}
-  .icon-btn{
-    width:34px;height:34px;border-radius:50%;border:1px solid var(--line);
-    background:var(--panel);color:var(--chalk-dim);font-family:'IBM Plex Mono',monospace;
-    font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;
-  }
+  .icon-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--panel);
+    color:var(--chalk-dim);font-family:'IBM Plex Mono',monospace;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
   .icon-btn:active{background:var(--panel-2);}
 
-  /* week strip */
   .week-nav{display:flex;align-items:center;gap:8px;}
-  .arrow{
-    width:28px;height:38px;border-radius:9px;border:1px solid var(--line);background:var(--panel);
-    color:var(--chalk-dim);display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;flex-shrink:0;
-  }
+  .arrow{width:28px;height:38px;border-radius:9px;border:1px solid var(--line);background:var(--panel);
+    color:var(--chalk-dim);display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;flex-shrink:0;}
   .arrow:active{background:var(--panel-2);}
   .week-strip{display:flex;gap:5px;flex:1;}
-  .week-dot{
-    flex:1;padding:7px 1px 7px;border-radius:10px;background:var(--panel);
-    border:1px solid var(--line);text-align:center;cursor:pointer;
-    transition:background .15s, border-color .15s;position:relative;
-  }
+  .week-dot{flex:1;padding:7px 1px;border-radius:10px;background:var(--panel);border:1px solid var(--line);
+    text-align:center;cursor:pointer;transition:background .15s,border-color .15s;}
   .week-dot .d{display:block;font-family:'Oswald',sans-serif;font-weight:600;font-size:10.5px;color:var(--chalk-dim);letter-spacing:.04em;}
   .week-dot .num{display:block;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;margin-top:2px;color:var(--chalk);}
   .week-dot .pip{width:5px;height:5px;border-radius:50%;background:transparent;margin:4px auto 0;}
   .week-dot.st-complete .pip{background:var(--tape);}
-  .week-dot.st-partial  .pip{background:var(--steel);}
-  .week-dot.st-missed   .pip{background:var(--rust);}
-  .week-dot.st-rest     .pip{background:var(--line);}
+  .week-dot.st-partial .pip{background:var(--steel);}
+  .week-dot.st-missed .pip{background:var(--rust);}
+  .week-dot.st-rest .pip{background:var(--line);}
   .week-dot.today{border-color:var(--steel);}
   .week-dot.active{background:var(--panel-2);border-color:var(--tape);}
   .week-dot.active .d{color:var(--tape);}
 
-  /* ---- Day header ---- */
   .day-header{padding:16px 18px 4px;}
-  .focus-pill{
-    display:inline-flex;align-items:center;gap:6px;
-    background:var(--panel);border:1px solid var(--line);
-    padding:5px 12px 5px 10px;border-radius:100px;font-size:11.5px;
-    color:var(--chalk-dim);letter-spacing:.04em;text-transform:uppercase;margin-bottom:10px;
-  }
+  .focus-pill{display:inline-flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);
+    padding:5px 12px 5px 10px;border-radius:100px;font-size:11.5px;color:var(--chalk-dim);letter-spacing:.04em;text-transform:uppercase;margin-bottom:10px;}
   .focus-pill .sw{width:7px;height:7px;border-radius:50%;background:var(--steel);}
   .focus-pill.cardio .sw{background:var(--tape);}
   .focus-pill.rest .sw{background:var(--rust);}
+  .focus-pill.food .sw{background:var(--leaf);}
   .day-title{font-family:'Oswald',sans-serif;font-weight:700;font-size:29px;margin:0 0 4px;letter-spacing:.01em;text-transform:uppercase;}
   .day-sub{color:var(--chalk-dim);font-size:13.5px;margin:0 0 16px;line-height:1.5;}
 
   main{padding:0 18px;}
 
-  /* ---- Exercise card ---- */
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 16px 15px;margin-bottom:12px;}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px;}
   .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px;}
   .ex-name{font-family:'Oswald',sans-serif;font-weight:600;font-size:17px;}
   .ex-meta{display:flex;gap:10px;margin-top:5px;}
   .ex-meta span{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--chalk-dim);}
   .ex-meta b{color:var(--chalk);font-weight:600;}
-  .rest-badge{
-    flex-shrink:0;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;
-    padding:6px 10px;text-align:center;cursor:pointer;min-width:58px;user-select:none;
-  }
+  .rest-badge{flex-shrink:0;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:6px 10px;text-align:center;cursor:pointer;min-width:58px;user-select:none;}
   .rest-badge .lbl{font-size:9px;color:var(--chalk-dim);letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:2px;}
   .rest-badge .val{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:14px;color:var(--steel);}
   .rest-badge.running{border-color:var(--tape);}
   .rest-badge.running .val{color:var(--tape);}
   .ex-note{font-size:12.5px;color:var(--chalk-dim);line-height:1.5;margin:0 0 12px;}
   .plates-row{display:flex;align-items:center;gap:8px;}
-  .plate{
-    width:34px;height:34px;border-radius:50%;border:2.5px solid var(--steel-dim);background:transparent;
-    display:flex;align-items:center;justify-content:center;cursor:pointer;
-    transition:transform .12s ease, background .15s, border-color .15s;flex-shrink:0;
-  }
+  .plate{width:34px;height:34px;border-radius:50%;border:2.5px solid var(--steel-dim);background:transparent;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .12s,background .15s,border-color .15s;flex-shrink:0;}
   .plate::after{content:'';width:9px;height:9px;border-radius:50%;background:var(--steel-dim);transition:background .15s;}
   .plate.on{border-color:var(--tape);background:var(--tape-dim);}
   .plate.on::after{background:var(--tape);}
-  .plate:active{transform:scale(0.9);}
+  .plate:active{transform:scale(.9);}
   .plates-progress{margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--chalk-dim);}
   .plates-progress b{color:var(--chalk);}
 
@@ -125,23 +89,18 @@
   .stat{flex:1;background:var(--panel-2);border-radius:12px;padding:11px 12px;}
   .stat .k{font-size:10px;color:var(--chalk-dim);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:4px;}
   .stat .v{font-family:'Oswald',sans-serif;font-weight:600;font-size:17px;}
-  .toggle-done{
-    display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border-radius:12px;
-    border:1.5px solid var(--steel-dim);background:transparent;color:var(--chalk);
-    font-family:'Inter',sans-serif;font-weight:600;font-size:13.5px;cursor:pointer;transition:all .15s;
-  }
+  .toggle-done{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border-radius:12px;
+    border:1.5px solid var(--steel-dim);background:transparent;color:var(--chalk);font-family:'Inter',sans-serif;font-weight:600;font-size:13.5px;cursor:pointer;transition:all .15s;}
   .toggle-done.on{background:var(--tape-dim);border-color:var(--tape);color:var(--tape);}
 
-  /* HIIT timer */
   .timer-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px 18px;margin-bottom:12px;text-align:center;}
   .timer-phase{font-family:'Oswald',sans-serif;font-weight:600;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--chalk-dim);margin-bottom:6px;}
-  .timer-phase.work{color:var(--tape);}
-  .timer-phase.recover{color:var(--steel);}
+  .timer-phase.work{color:var(--tape);} .timer-phase.recover{color:var(--steel);}
   .timer-display{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:56px;line-height:1;margin:6px 0 4px;letter-spacing:-.02em;}
   .timer-round{font-size:12px;color:var(--chalk-dim);margin-bottom:18px;}
   .timer-controls{display:flex;gap:10px;justify-content:center;}
-  .tbtn{padding:11px 22px;border-radius:100px;border:1.5px solid var(--line);background:var(--panel-2);
-    color:var(--chalk);font-family:'Inter',sans-serif;font-weight:600;font-size:13px;cursor:pointer;}
+  .tbtn{padding:11px 22px;border-radius:100px;border:1.5px solid var(--line);background:var(--panel-2);color:var(--chalk);
+    font-family:'Inter',sans-serif;font-weight:600;font-size:13px;cursor:pointer;}
   .tbtn.primary{background:var(--tape);border-color:var(--tape);color:#17181A;}
   .tbtn:active{opacity:.75;}
   .hiit-protocol{display:flex;justify-content:center;gap:16px;margin-top:16px;padding-top:16px;border-top:1px solid var(--line);}
@@ -153,33 +112,110 @@
     padding:12px 14px;margin-bottom:14px;font-size:12px;color:var(--chalk-dim);line-height:1.5;align-items:flex-start;}
   .warmup-note b{color:var(--chalk);font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:.03em;text-transform:uppercase;font-size:11px;}
 
-  /* ---- Recap / calendar ---- */
-  .month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  /* ---------- KALORI ---------- */
+  .ring-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px 18px 18px;margin-bottom:12px;text-align:center;}
+  .ring-wrap{position:relative;width:172px;height:172px;margin:0 auto 4px;}
+  .ring-wrap svg{transform:rotate(-90deg);}
+  .ring-bg{stroke:var(--panel-2);}
+  .ring-fg{stroke:var(--leaf);transition:stroke-dashoffset .35s ease, stroke .2s;}
+  .ring-fg.over{stroke:var(--rust);}
+  .ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .ring-center .big{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:34px;line-height:1;}
+  .ring-center .of{font-size:12px;color:var(--chalk-dim);margin-top:5px;}
+  .ring-center .lbl{font-size:9.5px;color:var(--chalk-dim);text-transform:uppercase;letter-spacing:.1em;margin-top:8px;}
+  .remain-line{font-size:13px;margin-top:10px;color:var(--chalk-dim);}
+  .remain-line b{font-family:'IBM Plex Mono',monospace;font-size:15px;color:var(--leaf);}
+  .remain-line b.over{color:var(--rust);}
+
+  .macro-row{display:flex;gap:10px;margin-top:16px;padding-top:16px;border-top:1px solid var(--line);}
+  .macro{flex:1;text-align:center;}
+  .macro .k{display:block;font-size:9.5px;color:var(--chalk-dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;}
+  .macro .v{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:16px;}
+  .macro .v small{font-size:11px;color:var(--chalk-dim);}
+  .macro-bar{height:3px;border-radius:2px;background:var(--panel-2);margin-top:7px;overflow:hidden;}
+  .macro-bar i{display:block;height:100%;background:var(--steel);border-radius:2px;}
+
+  .add-row{display:flex;gap:8px;margin-bottom:10px;}
+  .add-row input{flex:1;min-width:0;background:var(--panel-2);border:1px solid var(--line);border-radius:11px;
+    padding:12px 12px;color:var(--chalk);font-family:'Inter',sans-serif;font-size:14px;}
+  .add-row input::placeholder{color:#5E6067;}
+  .add-row input:focus{outline:none;border-color:var(--steel-dim);}
+  .add-row input.num{flex:0 0 78px;font-family:'IBM Plex Mono',monospace;text-align:center;}
+  .add-btn{width:100%;padding:13px;border-radius:12px;border:none;background:var(--leaf);color:#17181A;
+    font-family:'Inter',sans-serif;font-weight:700;font-size:13.5px;cursor:pointer;}
+  .add-btn:active{opacity:.8;}
+  .add-btn:disabled{background:var(--panel-2);color:#5E6067;cursor:default;}
+
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:4px;}
+  .chip{background:var(--panel-2);border:1px solid var(--line);border-radius:100px;padding:7px 12px;
+    font-size:12px;color:var(--chalk);cursor:pointer;display:flex;align-items:center;gap:7px;max-width:100%;}
+  .chip:active{border-color:var(--leaf);}
+  .chip .kc{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--chalk-dim);flex-shrink:0;}
+  .chip .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .chip .x{color:#5E6067;font-size:14px;line-height:1;padding-left:2px;}
+
+  .food-item{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);
+    border-radius:12px;padding:12px 14px;margin-bottom:7px;}
+  .food-item .nm{flex:1;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .food-item .pr{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--steel);flex-shrink:0;}
+  .food-item .kc{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;flex-shrink:0;}
+  .food-item .del{background:none;border:none;color:#5E6067;font-size:19px;line-height:1;cursor:pointer;padding:0 0 0 4px;flex-shrink:0;}
+
+  .setup-toggle{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;
+    display:flex;justify-content:space-between;align-items:center;cursor:pointer;color:var(--chalk);
+    font-family:'Oswald',sans-serif;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;margin-bottom:10px;}
+  .setup-body{display:none;}
+  .setup-body.open{display:block;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:10.5px;color:var(--chalk-dim);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;}
+  .field input[type=number]{width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:11px;
+    padding:12px;color:var(--chalk);font-family:'IBM Plex Mono',monospace;font-size:15px;}
+  .field input:focus{outline:none;border-color:var(--steel-dim);}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;}
+  .seg button{flex:1;min-width:70px;padding:10px 6px;border-radius:10px;border:1px solid var(--line);background:var(--panel-2);
+    color:var(--chalk-dim);font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;}
+  .seg button.on{background:var(--tape-dim);border-color:var(--tape);color:var(--tape);}
+  input[type=range]{width:100%;accent-color:var(--tape);height:26px;}
+  .calc-out{background:var(--panel-2);border-radius:12px;padding:14px;margin-top:6px;}
+  .calc-line{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;font-size:12.5px;color:var(--chalk-dim);}
+  .calc-line b{font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--chalk);}
+  .calc-line.total{border-top:1px solid var(--line);margin-top:6px;padding-top:11px;}
+  .calc-line.total b{color:var(--tape);font-size:19px;}
+  .warn-box{background:var(--rust-dim);border:1px solid var(--rust);border-radius:12px;padding:12px 14px;
+    font-size:12px;line-height:1.55;color:#E5C0B0;margin-top:10px;}
+
+  /* ---------- REKAP ---------- */
+  .month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
   .month-label{font-family:'Oswald',sans-serif;font-weight:700;font-size:20px;text-transform:uppercase;letter-spacing:.02em;}
+  .cal-mode{display:flex;gap:6px;margin-bottom:14px;}
+  .cal-mode button{flex:1;padding:9px;border-radius:10px;border:1px solid var(--line);background:var(--panel);
+    color:var(--chalk-dim);font-family:'Oswald',sans-serif;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;cursor:pointer;}
+  .cal-mode button.on{background:var(--panel-2);border-color:var(--tape);color:var(--tape);}
   .cal-head{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:6px;}
   .cal-head span{text-align:center;font-family:'Oswald',sans-serif;font-size:10.5px;color:var(--chalk-dim);letter-spacing:.06em;text-transform:uppercase;}
-  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:20px;}
-  .cell{
-    aspect-ratio:1/1;border-radius:11px;border:1px solid var(--line);background:var(--panel);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
-    cursor:pointer;position:relative;transition:transform .1s;
-  }
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:18px;}
+  .cell{aspect-ratio:1/1;border-radius:11px;border:1px solid var(--line);background:var(--panel);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;transition:transform .1s;}
   .cell:active{transform:scale(.94);}
   .cell.blank{background:transparent;border-color:transparent;cursor:default;}
   .cell .n{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--chalk-dim);}
   .cell .bar{width:16px;height:3px;border-radius:2px;background:transparent;}
   .cell.st-complete{background:var(--tape-dim);border-color:var(--tape);}
-  .cell.st-complete .n{color:var(--tape);}
-  .cell.st-complete .bar{background:var(--tape);}
+  .cell.st-complete .n{color:var(--tape);} .cell.st-complete .bar{background:var(--tape);}
   .cell.st-partial{border-color:var(--steel-dim);}
-  .cell.st-partial .n{color:var(--steel);}
-  .cell.st-partial .bar{background:var(--steel);}
+  .cell.st-partial .n{color:var(--steel);} .cell.st-partial .bar{background:var(--steel);}
   .cell.st-missed{background:var(--rust-dim);border-color:var(--rust);}
-  .cell.st-missed .n{color:var(--rust);}
-  .cell.st-missed .bar{background:var(--rust);}
+  .cell.st-missed .n{color:var(--rust);} .cell.st-missed .bar{background:var(--rust);}
   .cell.st-rest .n{color:#5A5C63;}
-  .cell.st-future{background:transparent;}
-  .cell.st-future .n{color:#4A4C52;}
+  .cell.st-future{background:transparent;} .cell.st-future .n{color:#4A4C52;}
+  /* kalori */
+  .cell.kc-under{background:#2A3A2C;border-color:var(--leaf);}
+  .cell.kc-under .n{color:var(--leaf);} .cell.kc-under .bar{background:var(--leaf);}
+  .cell.kc-close{border-color:var(--steel-dim);}
+  .cell.kc-close .n{color:var(--steel);} .cell.kc-close .bar{background:var(--steel);}
+  .cell.kc-over{background:var(--rust-dim);border-color:var(--rust);}
+  .cell.kc-over .n{color:var(--rust);} .cell.kc-over .bar{background:var(--rust);}
+  .cell.kc-none .n{color:#4A4C52;}
   .cell.today{box-shadow:0 0 0 2px var(--steel) inset;}
 
   .legend{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:22px;padding:14px;background:var(--panel);border-radius:14px;border:1px solid var(--line);}
@@ -188,53 +224,81 @@
 
   .sec-title{font-family:'Oswald',sans-serif;font-weight:600;font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--chalk-dim);margin:0 0 10px;}
   .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px;}
-  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 14px 13px;}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;}
   .kpi .k{display:block;font-size:10px;color:var(--chalk-dim);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
   .kpi .v{font-family:'Oswald',sans-serif;font-weight:700;font-size:26px;line-height:1;}
   .kpi .v small{font-size:13px;color:var(--chalk-dim);font-weight:500;}
-  .kpi.accent .v{color:var(--tape);}
-  .kpi.warn .v{color:var(--rust);}
+  .kpi.accent .v{color:var(--tape);} .kpi.warn .v{color:var(--rust);} .kpi.leaf .v{color:var(--leaf);}
 
   .miss-list{margin-bottom:22px;}
-  .miss-item{
-    display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);
-    border-left:3px solid var(--rust);border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;
-  }
+  .miss-item{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);
+    border-left:3px solid var(--rust);border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;}
   .miss-item.partial{border-left-color:var(--steel);}
   .miss-item .date{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--chalk-dim);flex-shrink:0;width:56px;}
-  .miss-item .what{flex:1;font-size:13px;font-family:'Oswald',sans-serif;font-weight:500;letter-spacing:.01em;}
+  .miss-item .what{flex:1;font-size:13px;font-family:'Oswald',sans-serif;font-weight:500;}
   .miss-item .pct{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--rust);}
   .miss-item.partial .pct{color:var(--steel);}
   .empty-note{background:var(--panel);border:1px dashed var(--line);border-radius:14px;padding:18px;text-align:center;font-size:13px;color:var(--chalk-dim);line-height:1.6;}
-
-  .danger-btn{
-    width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:transparent;
-    color:var(--chalk-dim);font-family:'Inter',sans-serif;font-size:12.5px;cursor:pointer;margin-bottom:8px;
-  }
+  .danger-btn{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:transparent;
+    color:var(--chalk-dim);font-family:'Inter',sans-serif;font-size:12.5px;cursor:pointer;margin-bottom:8px;}
   .danger-btn:active{background:var(--panel);}
 
-  /* ---- Bottom nav ---- */
-  nav.bottom{
-    position:fixed;bottom:0;left:0;right:0;z-index:30;
-    background:rgba(33,34,38,.94);backdrop-filter:blur(12px);
-    border-top:1px solid var(--line);display:flex;padding:9px 6px calc(9px + env(safe-area-inset-bottom));
-  }
-  nav.bottom button{
-    flex:1;background:none;border:none;color:var(--chalk-dim);
-    display:flex;flex-direction:column;align-items:center;gap:5px;padding:5px 2px;cursor:pointer;
-    font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;
-  }
+  /* ---------- PROFIL / LEVEL ---------- */
+  .lv-hero{background:linear-gradient(160deg,#26272C 0%,var(--panel) 60%);border:1px solid var(--line);
+    border-radius:20px;padding:26px 18px 20px;margin-bottom:12px;text-align:center;position:relative;overflow:hidden;}
+  .lv-hero::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);
+    width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(232,178,60,.10),transparent 70%);pointer-events:none;}
+  .lv-badge{width:92px;height:92px;margin:0 auto 14px;position:relative;display:flex;align-items:center;justify-content:center;}
+  .lv-badge svg{position:absolute;inset:0;}
+  .lv-badge .num{font-family:'Oswald',sans-serif;font-weight:700;font-size:34px;color:var(--tape);line-height:1;position:relative;}
+  .lv-badge .cap{position:absolute;bottom:-3px;left:50%;transform:translateX(-50%);font-size:8.5px;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--chalk-dim);background:var(--panel);padding:0 6px;}
+  .lv-name{font-family:'Oswald',sans-serif;font-weight:700;font-size:23px;text-transform:uppercase;letter-spacing:.02em;margin-bottom:5px;position:relative;}
+  .lv-sub{font-size:12.5px;color:var(--chalk-dim);line-height:1.55;margin-bottom:18px;position:relative;}
+  .lv-track{position:relative;height:9px;border-radius:5px;background:var(--panel-2);overflow:hidden;margin-bottom:9px;}
+  .lv-track i{display:block;height:100%;background:linear-gradient(90deg,var(--tape-dim),var(--tape));border-radius:5px;transition:width .4s ease;}
+  .lv-track-lbl{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--chalk-dim);position:relative;}
+  .lv-track-lbl b{color:var(--tape);}
+
+  .wt-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:12px;}
+  .wt-now{display:flex;align-items:baseline;justify-content:center;gap:8px;margin-bottom:4px;}
+  .wt-now .v{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:38px;line-height:1;}
+  .wt-now .u{font-size:14px;color:var(--chalk-dim);}
+  .wt-delta{text-align:center;font-size:12.5px;color:var(--chalk-dim);margin-bottom:16px;}
+  .wt-delta b{font-family:'IBM Plex Mono',monospace;color:var(--leaf);}
+  .wt-delta b.up{color:var(--rust);}
+  .spark{width:100%;height:76px;display:block;margin-bottom:14px;}
+  .spark path.ln{fill:none;stroke:var(--steel);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .spark path.ar{fill:rgba(110,143,163,.13);stroke:none;}
+  .spark circle{fill:var(--tape);}
+  .spark line.goal{stroke:var(--leaf);stroke-width:1;stroke-dasharray:3 3;}
+
+  .lv-list{margin-bottom:20px;}
+  .lv-row{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);
+    border-radius:12px;padding:11px 13px;margin-bottom:6px;}
+  .lv-row.done{border-color:var(--tape-dim);background:#241F13;}
+  .lv-row.current{border-color:var(--tape);background:var(--tape-dim);}
+  .lv-row .no{width:26px;height:26px;border-radius:8px;background:var(--panel-2);color:var(--chalk-dim);
+    display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:600;flex-shrink:0;}
+  .lv-row.done .no{background:var(--tape-dim);color:var(--tape);}
+  .lv-row.current .no{background:var(--tape);color:#17181A;}
+  .lv-row .nm{flex:1;font-family:'Oswald',sans-serif;font-weight:500;font-size:13.5px;letter-spacing:.01em;color:var(--chalk-dim);}
+  .lv-row.done .nm,.lv-row.current .nm{color:var(--chalk);}
+  .lv-row .kg{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--chalk-dim);flex-shrink:0;}
+  .lv-row.current .kg{color:var(--tape);}
+  .lv-row .tick{font-size:13px;color:var(--tape);flex-shrink:0;width:14px;text-align:center;}
+
+  nav.bottom{position:fixed;bottom:0;left:0;right:0;z-index:30;background:rgba(33,34,38,.94);backdrop-filter:blur(12px);
+    border-top:1px solid var(--line);display:flex;padding:9px 6px calc(9px + env(safe-area-inset-bottom));}
+  nav.bottom button{flex:1;background:none;border:none;color:var(--chalk-dim);display:flex;flex-direction:column;
+    align-items:center;gap:5px;padding:5px 2px;cursor:pointer;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;}
   nav.bottom button svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
   nav.bottom button.active{color:var(--tape);}
 
-  /* ---- Modal ---- */
   .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:40;display:none;align-items:flex-end;justify-content:center;}
   .modal-backdrop.show{display:flex;}
-  .modal{
-    background:var(--panel);border-top-left-radius:20px;border-top-right-radius:20px;width:100%;max-width:480px;
-    max-height:80vh;overflow-y:auto;padding:20px 20px calc(24px + env(safe-area-inset-bottom));
-    border:1px solid var(--line);border-bottom:none;
-  }
+  .modal{background:var(--panel);border-top-left-radius:20px;border-top-right-radius:20px;width:100%;max-width:480px;
+    max-height:80vh;overflow-y:auto;padding:20px 20px calc(24px + env(safe-area-inset-bottom));border:1px solid var(--line);border-bottom:none;}
   .modal h3{font-family:'Oswald',sans-serif;font-weight:700;font-size:19px;margin:0 0 4px;text-transform:uppercase;}
   .modal .sub{font-size:12px;color:var(--chalk-dim);margin-bottom:16px;}
   .modal h4{font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--tape);margin:18px 0 8px;}
@@ -249,7 +313,7 @@
 <header class="top">
   <div class="brand-row">
     <div class="brand">
-      <span class="kicker" id="kicker">175cm · 105 → 85kg</span>
+      <span class="kicker" id="kicker"></span>
       <span class="name" id="brandName">Program Gym</span>
     </div>
     <button class="icon-btn" id="infoBtn">i</button>
@@ -266,13 +330,13 @@
 
 <nav class="bottom" id="bottomNav">
   <button data-view="workout" class="active">
-    <svg viewBox="0 0 24 24"><path d="M4 9v6M8 7v10M16 7v10M20 9v6M8 12h8"/></svg>
-    Latihan
-  </button>
+    <svg viewBox="0 0 24 24"><path d="M4 9v6M8 7v10M16 7v10M20 9v6M8 12h8"/></svg>Latihan</button>
+  <button data-view="calories">
+    <svg viewBox="0 0 24 24"><path d="M12 3c1.5 3 4.5 4 4.5 8a4.5 4.5 0 0 1-9 0c0-1.5.6-2.6 1.3-3.5"/><path d="M12 21a7 7 0 0 0 7-7"/></svg>Kalori</button>
   <button data-view="recap">
-    <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
-    Rekap
-  </button>
+    <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Rekap</button>
+  <button data-view="profile">
+    <svg viewBox="0 0 24 24"><path d="M12 3l2.4 5.2 5.6.7-4.1 3.9 1.1 5.6L12 15.7 6.9 18.4 8 12.8 3.9 8.9l5.6-.7z"/></svg>Profil</button>
 </nav>
 
 <div class="modal-backdrop" id="modalBackdrop">
@@ -280,39 +344,38 @@
     <h3>Catatan Program</h3>
     <div class="sub">Panduan singkat biar progresnya aman &amp; konsisten</div>
     <h4>Warm-up</h4>
-    <p>5–10 menit cardio ringan (treadmill/sepeda) + dynamic stretch (leg swing, arm circle, bodyweight squat 10x) sebelum tiap sesi strength.</p>
-    <h4>Progression</h4>
-    <p>Minggu 1–2: fokus form, beban ringan–sedang, jangan buru-buru nambah beban.</p>
-    <p>Minggu 3–4: naikin beban 2.5–5kg atau tambah 1–2 rep tiap gerakan kalau udah terasa ringan.</p>
-    <p>Minggu 5+: evaluasi &amp; mulai variasi gerakan (RDL, squat barbel) kalau lutut &amp; core sudah siap.</p>
-    <h4>Aturan Umum</h4>
-    <p>RPE strength di 7–8/10 — capek tapi form tetap terjaga, jangan maksa beban berat di awal.</p>
-    <p>2–3 sesi pertama, minta trainer cek form squat, hip thrust, dan row.</p>
+    <p>5–10 menit cardio ringan + dynamic stretch (leg swing, arm circle, bodyweight squat 10x) sebelum tiap sesi strength.</p>
+    <h4>Progression Latihan</h4>
+    <p>Minggu 1–2: fokus form, beban ringan–sedang. Minggu 3–4: naikin beban 2.5–5kg atau tambah 1–2 rep. Minggu 5+: evaluasi &amp; mulai variasi gerakan.</p>
+    <p>RPE di 7–8/10 — capek tapi form tetap terjaga.</p>
+    <h4>Cara Hitung Kalori</h4>
+    <p>BMR pakai rumus Mifflin-St Jeor, lalu dikali faktor aktivitas jadi TDEE (kalori buat berat stabil). Target harian = TDEE dikurangi defisit yang kamu set.</p>
+    <p>Semua angka ini estimasi, bukan hasil ukur. Yang menentukan bukan rumusnya, tapi tren berat badan kamu 2–3 minggu ke depan. Kalau ternyata gak turun sama sekali, turunkan target ~150 kkal. Kalau turun terlalu cepat (&gt;1.2 kg/minggu konsisten), naikkan.</p>
+    <h4>Kenapa Ada Batas Bawah?</h4>
+    <p>App ini gak akan set target di bawah 1500 kkal. Defisit terlalu ekstrem bikin massa otot ikut hilang, metabolisme melambat, dan tingkat gagalnya jauh lebih tinggi. Turun pelan tapi bertahan itu lebih cepat sampai tujuan daripada turun cepat lalu balik lagi.</p>
+    <h4>Protein</h4>
+    <p>Target protein dihitung ~1.8 g per kg berat target. Ini yang jaga massa otot selama defisit — jadi yang hilang lemaknya, bukan ototnya.</p>
     <h4>Data Tersimpan Di Mana?</h4>
-    <p>Semua centang latihan disimpan di browser HP kamu sendiri (localStorage). Gak dikirim ke mana-mana. Kalau kamu hapus data browser atau ganti HP, riwayatnya ikut hilang.</p>
+    <p>Semua data disimpan di browser HP kamu sendiri (localStorage). Gak dikirim ke mana-mana. Kalau kamu hapus data browser atau ganti HP, riwayatnya ikut hilang.</p>
     <button class="modal-close" id="modalClose">Oke, Mengerti</button>
   </div>
 </div>
 
 <script>
-/* ============ DATA PROGRAM ============ */
+/* ================= PROGRAM ================= */
 const DAYS = [
-  { key:'sen', label:'Sen', full:'Senin', type:'strength',
-    focus:'Full Body Strength A',
+  { label:'Sen', full:'Senin', type:'strength', focus:'Full Body Strength A',
     sub:'Fokus belajar form dulu — beban ringan-sedang, jangan buru-buru nambah beban.',
     exercises:[
       {name:'Leg Press (mesin)', sets:3, reps:'12', rest:90, note:'Lebih aman ke lutut dibanding squat barbel di awal.'},
       {name:'Chest Press (mesin)', sets:3, reps:'10-12', rest:90, note:'Kalau belum kuat, mulai dari beban ringan, fokus form.'},
       {name:'Lat Pulldown', sets:3, reps:'10-12', rest:90, note:'Tarik ke dada, jangan pakai momentum badan.'},
       {name:'Seated Row (mesin/cable)', sets:3, reps:'10-12', rest:90, note:'Tarik siku ke belakang, dada tetap terbuka.'},
-      {name:'Plank', sets:3, reps:'20-30 detik', rest:45, note:'Perut ditarik, jangan nahan napas.'},
-    ]},
-  { key:'sel', label:'Sel', full:'Selasa', type:'cardio',
-    focus:'Cardio Zona 2',
+      {name:'Plank', sets:3, reps:'20-30 detik', rest:45, note:'Perut ditarik, jangan nahan napas.'}]},
+  { label:'Sel', full:'Selasa', type:'cardio', focus:'Cardio Zona 2',
     sub:'Bakar lemak tanpa bebani sendi, sekaligus bangun daya tahan jantung.',
     cardio:{duration:'30–40 menit', mode:'Sepeda statis / treadmill incline (jalan cepat)', intensity:'60–70% HR max', cue:'Masih bisa ngobrol, tapi agak ngos-ngosan.'}},
-  { key:'rab', label:'Rab', full:'Rabu', type:'strength',
-    focus:'Upper Body Strength',
+  { label:'Rab', full:'Rabu', type:'strength', focus:'Upper Body Strength',
     sub:'Push, pull, dan isolasi bahu/lengan — jaga siku jangan terkunci penuh.',
     exercises:[
       {name:'Shoulder Press (mesin/dumbbell)', sets:3, reps:'10-12', rest:90, note:'Jangan kunci siku penuh di atas.'},
@@ -320,507 +383,762 @@ const DAYS = [
       {name:'Cable / Assisted Pull-up', sets:3, reps:'8-10', rest:90, note:'Kalau belum kuat, pakai mesin assisted pull-up.'},
       {name:'Lateral Raise (dumbbell/cable)', sets:3, reps:'12-15', rest:60, note:'Beban ringan aja, fokus bentuk bahu.'},
       {name:'Tricep Pushdown (cable)', sets:3, reps:'12', rest:60, note:'Siku nempel di badan.'},
-      {name:'Bicep Curl (dumbbell/cable)', sets:3, reps:'12', rest:60, note:'Jangan ayun badan buat bantu angkat.'},
-    ]},
-  { key:'kam', label:'Kam', full:'Kamis', type:'recovery',
-    focus:'Active Recovery',
+      {name:'Bicep Curl (dumbbell/cable)', sets:3, reps:'12', rest:60, note:'Jangan ayun badan buat bantu angkat.'}]},
+  { label:'Kam', full:'Kamis', type:'recovery', focus:'Active Recovery',
     sub:'Bukan hari males-malesan total — tetap gerak ringan biar pemulihan otot lebih cepat.',
     recovery:{items:[
       {label:'Jalan santai', detail:'20-30 menit, outdoor atau treadmill flat'},
-      {label:'Stretching full body', detail:'10-15 menit — fokus pinggang, paha belakang, bahu'},
-    ]}},
-  { key:'jum', label:'Jum', full:'Jumat', type:'strength',
-    focus:'Lower Body Strength',
+      {label:'Stretching full body', detail:'10-15 menit — fokus pinggang, paha belakang, bahu'}]}},
+  { label:'Jum', full:'Jumat', type:'strength', focus:'Lower Body Strength',
     sub:'RDL & squat barbel baru masuk setelah ±4-6 minggu, saat sendi & core lebih siap.',
     exercises:[
       {name:'Leg Press', sets:3, reps:'12', rest:90, note:'Bisa naikin beban bertahap tiap minggu.'},
       {name:'Leg Curl (mesin)', sets:3, reps:'12', rest:60, note:'Isolasi hamstring.'},
       {name:'Leg Extension (mesin)', sets:3, reps:'12', rest:60, note:'Isolasi paha depan.'},
       {name:'Hip Thrust (bodyweight/barbel ringan)', sets:3, reps:'12-15', rest:90, note:'Bagus buat glutes & stabilitas pinggul.'},
-      {name:'Standing Calf Raise', sets:3, reps:'15-20', rest:45, note:'Bisa pakai mesin atau smith machine.'},
-    ]},
-  { key:'sab', label:'Sab', full:'Sabtu', type:'hiit',
-    focus:'HIIT / Interval',
+      {name:'Standing Calf Raise', sets:3, reps:'15-20', rest:45, note:'Bisa pakai mesin atau smith machine.'}]},
+  { label:'Sab', full:'Sabtu', type:'hiit', focus:'HIIT / Interval',
     sub:'Bakar kalori ekstra — tapi jangan tiap hari, sendi & recovery butuh jeda.',
     hiit:{work:30, recover:90, rounds:9, mode:'Treadmill atau sepeda statis'}},
-  { key:'min', label:'Min', full:'Minggu', type:'rest',
-    focus:'Rest Total',
+  { label:'Min', full:'Minggu', type:'rest', focus:'Rest Total',
     sub:'Full istirahat. Jalan santai boleh kalau mau, tapi gak wajib.'},
 ];
 
-const MONTHS = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-const STORE_KEY = 'gym_log_v2';
+const MONTHS=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const MONTHS_SHORT=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+const ACTIVITY=[
+  {k:'Ringan', v:1.375, d:'Kerja duduk + gym 3-5x/minggu. Mulai dari sini — kebanyakan orang menaksir aktivitasnya terlalu tinggi.'},
+  {k:'Sedang', v:1.55, d:'Kerja cukup aktif, atau gym intens 5-6x/minggu plus banyak jalan kaki harian.'},
+  {k:'Aktif', v:1.725, d:'Kerja fisik berat atau latihan hampir tiap hari. Jarang yang benar-benar masuk sini.'},
+];
+const LEVELS=[
+  'Langkah Pertama','Pemanasan','Kebiasaan Baru','Napas Stabil','Beban Pertama',
+  'Ritme Terbentuk','Sabuk Longgar','Tenaga Naik','Disiplin Terkunci','Setengah Jalan',
+  'Bentuk Mulai Tampak','Lebih Ringan','Naik Kelas','Stamina Baru','Kemeja Muat Lagi',
+  'Momentum Penuh','Ambang Batas','Nyaris Sampai','Sprint Terakhir','Target Tercapai'
+];
+const KEY_LOG='gym_log_v3', KEY_PROFILE='gym_profile_v1', KEY_FOODS='gym_foods_v1', KEY_WEIGHT='gym_weight_v1';
+const MIN_TARGET=1500;
 
-/* ============ TANGGAL ============ */
-function iso(d){
-  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-}
-function parseIso(s){ const [y,m,dd]=s.split('-').map(Number); return new Date(y,m-1,dd); }
-function dayIdx(d){ return (d.getDay()+6)%7; }          // 0 = Senin
-function startOfWeek(d){ const x=new Date(d); x.setDate(x.getDate()-dayIdx(x)); x.setHours(0,0,0,0); return x; }
-function addDays(d,n){ const x=new Date(d); x.setDate(x.getDate()+n); return x; }
-const TODAY_ISO = iso(new Date());
+/* ================= TANGGAL ================= */
+function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function parseIso(s){const[y,m,dd]=s.split('-').map(Number);return new Date(y,m-1,dd);}
+function dayIdx(d){return (d.getDay()+6)%7;}
+function startOfWeek(d){const x=new Date(d);x.setDate(x.getDate()-dayIdx(x));x.setHours(0,0,0,0);return x;}
+function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x;}
+const TODAY_ISO=iso(new Date());
 
-/* ============ PENYIMPANAN ============ */
-let log = {};
-function loadLog(){
-  try{ log = JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); }
-  catch(e){ log = {}; }
+/* ================= STORAGE ================= */
+let log={}, foods=[], weights={}, profile={sex:'m',age:30,height:175,startWeight:105,weight:105,target:90,act:0,deficit:750};
+function load(){
+  try{log=JSON.parse(localStorage.getItem(KEY_LOG)||'{}');}catch(e){log={};}
+  try{foods=JSON.parse(localStorage.getItem(KEY_FOODS)||'[]');}catch(e){foods=[];}
+  try{weights=JSON.parse(localStorage.getItem(KEY_WEIGHT)||'{}');}catch(e){weights={};}
+  try{const p=JSON.parse(localStorage.getItem(KEY_PROFILE)||'null'); if(p) profile=Object.assign(profile,p);}catch(e){}
 }
-function saveLog(){
-  try{ localStorage.setItem(STORE_KEY, JSON.stringify(log)); }catch(e){}
-}
-function blankEntry(di){
-  const d = DAYS[di];
-  return {
-    sets: d.exercises ? d.exercises.map(e=>Array(e.sets).fill(false)) : [],
-    recovery: d.recovery ? d.recovery.items.map(()=>false) : [],
-    done: false,
-  };
-}
-function entryFor(isoStr){
-  const di = dayIdx(parseIso(isoStr));
-  if(!log[isoStr]) log[isoStr] = blankEntry(di);
-  const e = log[isoStr], d = DAYS[di];
-  // jaga-jaga kalau struktur program berubah
-  if(d.exercises && (!e.sets || e.sets.length !== d.exercises.length)){
-    e.sets = d.exercises.map((ex,i)=>{
-      const old = (e.sets && e.sets[i]) || [];
-      return Array.from({length:ex.sets},(_,j)=> !!old[j]);
-    });
-  }
-  if(d.recovery && (!e.recovery || e.recovery.length !== d.recovery.items.length)){
-    e.recovery = d.recovery.items.map((_,i)=> !!(e.recovery && e.recovery[i]));
-  }
+function saveLog(){try{localStorage.setItem(KEY_LOG,JSON.stringify(log));}catch(e){}}
+function saveFoods(){try{localStorage.setItem(KEY_FOODS,JSON.stringify(foods));}catch(e){}}
+function saveWeights(){try{localStorage.setItem(KEY_WEIGHT,JSON.stringify(weights));}catch(e){}}
+function saveProfile(){try{localStorage.setItem(KEY_PROFILE,JSON.stringify(profile));}catch(e){}}
+
+function blank(di){const d=DAYS[di];return{
+  sets:d.exercises?d.exercises.map(e=>Array(e.sets).fill(false)):[],
+  recovery:d.recovery?d.recovery.items.map(()=>false):[],
+  done:false, food:[]};}
+function entryFor(s){
+  const di=dayIdx(parseIso(s));
+  if(!log[s]) log[s]=blank(di);
+  const e=log[s], d=DAYS[di];
+  if(!Array.isArray(e.food)) e.food=[];
+  if(d.exercises&&(!e.sets||e.sets.length!==d.exercises.length))
+    e.sets=d.exercises.map((ex,i)=>{const o=(e.sets&&e.sets[i])||[];return Array.from({length:ex.sets},(_,j)=>!!o[j]);});
+  if(d.recovery&&(!e.recovery||e.recovery.length!==d.recovery.items.length))
+    e.recovery=d.recovery.items.map((_,i)=>!!(e.recovery&&e.recovery[i]));
   return e;
 }
 
-/* ============ STATUS ============ */
-function ratioFor(isoStr){
-  const di = dayIdx(parseIso(isoStr)), d = DAYS[di];
+/* ================= KALORI ================= */
+function bmr(){
+  const b=10*profile.weight+6.25*profile.height-5*profile.age;
+  return Math.round(b+(profile.sex==='m'?5:-161));
+}
+function tdee(){return Math.round(bmr()*ACTIVITY[profile.act].v);}
+function calTarget(){return Math.max(MIN_TARGET, tdee()-profile.deficit);}
+function actualDeficit(){return tdee()-calTarget();}
+function proteinTarget(){return Math.round(profile.target*1.8);}
+function dayKcal(s){const e=log[s]; if(!e||!e.food)return 0; return e.food.reduce((a,f)=>a+(f.kcal||0),0);}
+function dayProtein(s){const e=log[s]; if(!e||!e.food)return 0; return e.food.reduce((a,f)=>a+(f.p||0),0);}
+function hasFood(s){const e=log[s];return !!(e&&e.food&&e.food.length);}
+function kcalStatus(s){
+  if(s>TODAY_ISO) return 'none';
+  if(!hasFood(s)) return 'none';
+  const t=calTarget(), k=dayKcal(s);
+  if(k<=t) return 'under';
+  if(k<=t+250) return 'close';
+  return 'over';
+}
+
+/* ================= STATUS LATIHAN ================= */
+function ratioFor(s){
+  const d=DAYS[dayIdx(parseIso(s))];
   if(d.type==='rest') return null;
-  const e = log[isoStr];
-  if(!e) return 0;
-  if(d.exercises){
-    const all = (e.sets||[]).flat();
-    if(!all.length) return 0;
-    return all.filter(Boolean).length / all.length;
-  }
-  if(d.recovery){
-    const arr = e.recovery||[];
-    if(!arr.length) return 0;
-    return arr.filter(Boolean).length / arr.length;
-  }
-  return e.done ? 1 : 0;   // cardio & hiit
+  const e=log[s]; if(!e) return 0;
+  if(d.exercises){const all=(e.sets||[]).flat(); if(!all.length)return 0; return all.filter(Boolean).length/all.length;}
+  if(d.recovery){const a=e.recovery||[]; if(!a.length)return 0; return a.filter(Boolean).length/a.length;}
+  return e.done?1:0;
 }
-function statusFor(isoStr){
-  const di = dayIdx(parseIso(isoStr)), d = DAYS[di];
+function statusFor(s){
+  const d=DAYS[dayIdx(parseIso(s))];
   if(d.type==='rest') return 'rest';
-  if(isoStr > TODAY_ISO) return 'future';
-  const r = ratioFor(isoStr);
-  if(r >= 1) return 'complete';
-  if(r > 0) return 'partial';
-  return isoStr === TODAY_ISO ? 'future' : 'missed';
+  if(s>TODAY_ISO) return 'future';
+  const r=ratioFor(s);
+  if(r>=1) return 'complete';
+  if(r>0) return 'partial';
+  return s===TODAY_ISO?'future':'missed';
 }
 
-/* ============ STATE UI ============ */
-let view = 'workout';
-let activeIso = TODAY_ISO;
-let weekStart = startOfWeek(new Date());
-let calMonth = new Date().getMonth();
-let calYear = new Date().getFullYear();
-let restTimers = {};
-let hiit = {running:false, phase:'work', remaining:30, round:1, interval:null};
+/* ================= UI STATE ================= */
+let view='workout', activeIso=TODAY_ISO, weekStart=startOfWeek(new Date());
+let calMonth=new Date().getMonth(), calYear=new Date().getFullYear(), calMode='latihan';
+let setupOpen=false, setupOpen2=false, restTimers={};
+let hiit={running:false,phase:'work',remaining:30,round:1,interval:null};
+function fmtTime(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+function clearRest(){Object.values(restTimers).forEach(t=>t.interval&&clearInterval(t.interval));restTimers={};}
+function stopHiit(){if(hiit.interval)clearInterval(hiit.interval);hiit.running=false;hiit.interval=null;}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 
-function fmtTime(sec){ return String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0'); }
-function clearRestTimers(){ Object.values(restTimers).forEach(t=>t.interval&&clearInterval(t.interval)); restTimers={}; }
-function stopHiit(){ if(hiit.interval) clearInterval(hiit.interval); hiit.running=false; hiit.interval=null; }
-
-/* ============ HEADER ============ */
+/* ================= HEADER ================= */
 function renderWeekStrip(){
-  const wrap = document.getElementById('weekStrip');
-  wrap.innerHTML = '';
+  const w=document.getElementById('weekStrip'); w.innerHTML='';
   for(let i=0;i<7;i++){
-    const date = addDays(weekStart,i), s = iso(date), st = statusFor(s);
-    const el = document.createElement('div');
-    el.className = 'week-dot st-'+st + (s===activeIso?' active':'') + (s===TODAY_ISO?' today':'');
-    el.innerHTML = `<span class="d">${DAYS[i].label}</span><span class="num">${date.getDate()}</span><span class="pip"></span>`;
-    el.onclick = ()=>{ activeIso = s; stopHiit(); render(); };
-    wrap.appendChild(el);
+    const date=addDays(weekStart,i), s=iso(date);
+    const st = view==='calories' ? 'kc-'+kcalStatus(s) : 'st-'+statusFor(s);
+    const el=document.createElement('div');
+    el.className='week-dot '+(view==='calories'?('st-'+(kcalStatus(s)==='under'?'complete':kcalStatus(s)==='close'?'partial':kcalStatus(s)==='over'?'missed':'rest')):st)
+      +(s===activeIso?' active':'')+(s===TODAY_ISO?' today':'');
+    el.innerHTML=`<span class="d">${DAYS[i].label}</span><span class="num">${date.getDate()}</span><span class="pip"></span>`;
+    el.onclick=()=>{activeIso=s;stopHiit();render();};
+    w.appendChild(el);
   }
 }
 function renderDayHeader(){
-  const wrap = document.getElementById('dayHeader');
-  const date = parseIso(activeIso), di = dayIdx(date), d = DAYS[di];
-  const cls = (d.type==='cardio'||d.type==='hiit') ? 'cardio' : ((d.type==='recovery'||d.type==='rest')?'rest':'');
-  const label = activeIso===TODAY_ISO ? 'Hari ini' : `${d.full}, ${date.getDate()} ${MONTHS_SHORT[date.getMonth()]}`;
-  wrap.innerHTML = `
-    <span class="focus-pill ${cls}"><span class="sw"></span>${label}</span>
-    <h1 class="day-title">${d.focus}</h1>
-    <p class="day-sub">${d.sub}</p>`;
+  const wrap=document.getElementById('dayHeader');
+  const date=parseIso(activeIso), d=DAYS[dayIdx(date)];
+  const label=activeIso===TODAY_ISO?'Hari ini':`${d.full}, ${date.getDate()} ${MONTHS_SHORT[date.getMonth()]}`;
+  if(view==='calories'){
+    wrap.innerHTML=`<span class="focus-pill food"><span class="sw"></span>${label}</span>
+      <h1 class="day-title">Catatan Kalori</h1>
+      <p class="day-sub">Masukin makanan beserta estimasi kalorinya. Gak harus presisi — konsisten mencatat lebih berguna daripada akurat sesekali.</p>`;
+    return;
+  }
+  const cls=(d.type==='cardio'||d.type==='hiit')?'cardio':((d.type==='recovery'||d.type==='rest')?'rest':'');
+  wrap.innerHTML=`<span class="focus-pill ${cls}"><span class="sw"></span>${label}</span>
+    <h1 class="day-title">${d.focus}</h1><p class="day-sub">${d.sub}</p>`;
 }
 
-/* ============ TAMPILAN LATIHAN ============ */
+/* ================= LATIHAN ================= */
 function renderStrength(d){
-  const e = entryFor(activeIso);
-  const wrap = document.createElement('div');
-  const warm = document.createElement('div');
-  warm.className='warmup-note';
-  warm.innerHTML = `<span><b>Warm-up</b><br>5-10 menit cardio ringan + dynamic stretch sebelum mulai.</span>`;
+  const e=entryFor(activeIso), wrap=document.createElement('div');
+  const warm=document.createElement('div'); warm.className='warmup-note';
+  warm.innerHTML=`<span><b>Warm-up</b><br>5-10 menit cardio ringan + dynamic stretch sebelum mulai.</span>`;
   wrap.appendChild(warm);
-
-  d.exercises.forEach((ex, ei)=>{
-    const card = document.createElement('div');
-    card.className='card';
-    const doneCount = e.sets[ei].filter(Boolean).length;
-    card.innerHTML = `
-      <div class="card-top">
-        <div>
-          <div class="ex-name">${ex.name}</div>
-          <div class="ex-meta"><span><b>${ex.sets}×${ex.reps}</b></span></div>
-        </div>
-        <div class="rest-badge"><span class="lbl">Rest</span><span class="val mono">${fmtTime(ex.rest)}</span></div>
-      </div>
-      <p class="ex-note">${ex.note}</p>
-      <div class="plates-row"></div>`;
-    const badge = card.querySelector('.rest-badge'), valEl = badge.querySelector('.val');
-    badge.onclick = ()=>{
-      const k = 'r'+ei;
-      if(restTimers[k]) clearInterval(restTimers[k].interval);
-      let rem = ex.rest;
-      badge.classList.add('running'); valEl.textContent = fmtTime(rem);
-      const interval = setInterval(()=>{
-        rem--;
-        if(rem<=0){ clearInterval(interval); badge.classList.remove('running'); valEl.textContent=fmtTime(ex.rest); delete restTimers[k]; return; }
-        valEl.textContent = fmtTime(rem);
-      },1000);
-      restTimers[k] = {interval};
+  d.exercises.forEach((ex,ei)=>{
+    const card=document.createElement('div'); card.className='card';
+    const done=e.sets[ei].filter(Boolean).length;
+    card.innerHTML=`<div class="card-top"><div><div class="ex-name">${ex.name}</div>
+      <div class="ex-meta"><span><b>${ex.sets}×${ex.reps}</b></span></div></div>
+      <div class="rest-badge"><span class="lbl">Rest</span><span class="val mono">${fmtTime(ex.rest)}</span></div></div>
+      <p class="ex-note">${ex.note}</p><div class="plates-row"></div>`;
+    const badge=card.querySelector('.rest-badge'), valEl=badge.querySelector('.val');
+    badge.onclick=()=>{
+      const k='r'+ei; if(restTimers[k])clearInterval(restTimers[k].interval);
+      let rem=ex.rest; badge.classList.add('running'); valEl.textContent=fmtTime(rem);
+      const it=setInterval(()=>{rem--;
+        if(rem<=0){clearInterval(it);badge.classList.remove('running');valEl.textContent=fmtTime(ex.rest);delete restTimers[k];return;}
+        valEl.textContent=fmtTime(rem);},1000);
+      restTimers[k]={interval:it};
     };
-    const row = card.querySelector('.plates-row');
+    const row=card.querySelector('.plates-row');
     for(let p=0;p<ex.sets;p++){
-      const plate = document.createElement('div');
-      plate.className = 'plate' + (e.sets[ei][p]?' on':'');
-      plate.onclick = ()=>{ e.sets[ei][p] = !e.sets[ei][p]; saveLog(); render(); };
-      row.appendChild(plate);
+      const pl=document.createElement('div'); pl.className='plate'+(e.sets[ei][p]?' on':'');
+      pl.onclick=()=>{e.sets[ei][p]=!e.sets[ei][p];saveLog();render();};
+      row.appendChild(pl);
     }
-    const prog = document.createElement('span');
-    prog.className='plates-progress';
-    prog.innerHTML = `<b>${doneCount}</b>/${ex.sets}`;
-    row.appendChild(prog);
+    const pr=document.createElement('span'); pr.className='plates-progress';
+    pr.innerHTML=`<b>${done}</b>/${ex.sets}`; row.appendChild(pr);
     wrap.appendChild(card);
   });
   return wrap;
 }
-
 function renderCardio(d){
-  const e = entryFor(activeIso), c = d.cardio;
-  const wrap = document.createElement('div');
-  wrap.innerHTML = `
-    <div class="simple-card">
-      <div class="stat-row">
-        <div class="stat"><span class="k">Durasi</span><span class="v">${c.duration}</span></div>
-        <div class="stat"><span class="k">Intensitas</span><span class="v">${c.intensity}</span></div>
-      </div>
-      <p><b style="color:var(--chalk)">Mode:</b> ${c.mode}</p>
-      <p>${c.cue}</p>
-    </div>`;
-  const btn = document.createElement('button');
-  btn.className = 'toggle-done' + (e.done?' on':'');
-  btn.textContent = e.done ? '✓ Sesi Selesai' : 'Tandai Sesi Selesai';
-  btn.onclick = ()=>{ e.done = !e.done; saveLog(); render(); };
-  wrap.querySelector('.simple-card').appendChild(btn);
+  const e=entryFor(activeIso), c=d.cardio, wrap=document.createElement('div');
+  wrap.innerHTML=`<div class="simple-card"><div class="stat-row">
+    <div class="stat"><span class="k">Durasi</span><span class="v">${c.duration}</span></div>
+    <div class="stat"><span class="k">Intensitas</span><span class="v">${c.intensity}</span></div></div>
+    <p><b style="color:var(--chalk)">Mode:</b> ${c.mode}</p><p>${c.cue}</p></div>`;
+  const b=document.createElement('button');
+  b.className='toggle-done'+(e.done?' on':''); b.textContent=e.done?'✓ Sesi Selesai':'Tandai Sesi Selesai';
+  b.onclick=()=>{e.done=!e.done;saveLog();render();};
+  wrap.querySelector('.simple-card').appendChild(b);
   return wrap;
 }
-
 function renderRecovery(d){
-  const e = entryFor(activeIso);
-  const wrap = document.createElement('div');
-  d.recovery.items.forEach((item, ii)=>{
-    const card = document.createElement('div');
-    card.className='simple-card';
-    card.innerHTML = `<p style="margin-bottom:14px"><b style="color:var(--chalk);font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.03em;font-size:13px">${item.label}</b><br>${item.detail}</p>`;
-    const btn = document.createElement('button');
-    btn.className = 'toggle-done' + (e.recovery[ii]?' on':'');
-    btn.textContent = e.recovery[ii] ? '✓ Selesai' : 'Tandai Selesai';
-    btn.onclick = ()=>{ e.recovery[ii] = !e.recovery[ii]; saveLog(); render(); };
-    card.appendChild(btn);
-    wrap.appendChild(card);
+  const e=entryFor(activeIso), wrap=document.createElement('div');
+  d.recovery.items.forEach((it,ii)=>{
+    const c=document.createElement('div'); c.className='simple-card';
+    c.innerHTML=`<p style="margin-bottom:14px"><b style="color:var(--chalk);font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.03em;font-size:13px">${it.label}</b><br>${it.detail}</p>`;
+    const b=document.createElement('button');
+    b.className='toggle-done'+(e.recovery[ii]?' on':''); b.textContent=e.recovery[ii]?'✓ Selesai':'Tandai Selesai';
+    b.onclick=()=>{e.recovery[ii]=!e.recovery[ii];saveLog();render();};
+    c.appendChild(b); wrap.appendChild(c);
   });
   return wrap;
 }
-
 function renderRest(){
-  const wrap = document.createElement('div');
-  wrap.innerHTML = `<div class="simple-card"><p style="margin-bottom:0">Otot butuh waktu ini buat pulih dan tumbuh. Tidur cukup, minum air, makan protein tetap jalan seperti biasa. Hari ini gak dihitung sebagai bolong di rekap.</p></div>`;
-  return wrap;
+  const w=document.createElement('div');
+  w.innerHTML=`<div class="simple-card"><p style="margin-bottom:0">Otot butuh waktu ini buat pulih dan tumbuh. Tidur cukup, minum air, makan protein tetap jalan seperti biasa. Hari ini gak dihitung sebagai bolong di rekap.</p></div>`;
+  return w;
 }
-
 function renderHiit(d){
-  const e = entryFor(activeIso), h = d.hiit;
-  const wrap = document.createElement('div');
-  const t = document.createElement('div');
-  t.className='timer-card';
-  t.innerHTML = `
-    <div class="timer-phase ${hiit.phase}" id="hiitPhase">${hiit.phase==='work'?'Kerja Keras':'Pemulihan'}</div>
+  const e=entryFor(activeIso), h=d.hiit, wrap=document.createElement('div');
+  const t=document.createElement('div'); t.className='timer-card';
+  t.innerHTML=`<div class="timer-phase ${hiit.phase}" id="hiitPhase">${hiit.phase==='work'?'Kerja Keras':'Pemulihan'}</div>
     <div class="timer-display mono" id="hiitDisplay">${fmtTime(hiit.remaining)}</div>
     <div class="timer-round" id="hiitRound">Ronde ${hiit.round} / ${h.rounds}</div>
-    <div class="timer-controls">
-      <button class="tbtn" id="hiitReset">Reset</button>
-      <button class="tbtn primary" id="hiitToggle">${hiit.running?'Jeda':'Mulai'}</button>
-    </div>
-    <div class="hiit-protocol">
-      <div><span class="k">Kerja</span><span class="v mono">${h.work}s</span></div>
-      <div><span class="k">Pelan</span><span class="v mono">${h.recover}s</span></div>
-      <div><span class="k">Ronde</span><span class="v mono">${h.rounds}x</span></div>
-    </div>`;
+    <div class="timer-controls"><button class="tbtn" id="hiitReset">Reset</button>
+    <button class="tbtn primary" id="hiitToggle">${hiit.running?'Jeda':'Mulai'}</button></div>
+    <div class="hiit-protocol"><div><span class="k">Kerja</span><span class="v mono">${h.work}s</span></div>
+    <div><span class="k">Pelan</span><span class="v mono">${h.recover}s</span></div>
+    <div><span class="k">Ronde</span><span class="v mono">${h.rounds}x</span></div></div>`;
   wrap.appendChild(t);
-
-  const info = document.createElement('div');
-  info.className='simple-card';
-  info.innerHTML = `<p><b style="color:var(--chalk)">Mode:</b> ${h.mode}</p><p>Total waktu efektif ±20-25 menit + warm-up/cool-down. Ronde kerja = ngebut, ronde pelan = benar-benar pelan buat pemulihan.</p>`;
-  const btn = document.createElement('button');
-  btn.className = 'toggle-done' + (e.done?' on':'');
-  btn.textContent = e.done ? '✓ Sesi Selesai' : 'Tandai Sesi Selesai';
-  btn.onclick = ()=>{ e.done = !e.done; saveLog(); render(); };
-  info.appendChild(btn);
-  wrap.appendChild(info);
-
-  t.querySelector('#hiitToggle').onclick = ()=>{
-    hiit.running = !hiit.running;
-    if(hiit.running) hiit.interval = setInterval(hiitTick,1000);
-    else clearInterval(hiit.interval);
+  const info=document.createElement('div'); info.className='simple-card';
+  info.innerHTML=`<p><b style="color:var(--chalk)">Mode:</b> ${h.mode}</p><p>Total waktu efektif ±20-25 menit + warm-up/cool-down.</p>`;
+  const b=document.createElement('button');
+  b.className='toggle-done'+(e.done?' on':''); b.textContent=e.done?'✓ Sesi Selesai':'Tandai Sesi Selesai';
+  b.onclick=()=>{e.done=!e.done;saveLog();render();};
+  info.appendChild(b); wrap.appendChild(info);
+  t.querySelector('#hiitToggle').onclick=()=>{
+    hiit.running=!hiit.running;
+    if(hiit.running)hiit.interval=setInterval(hiitTick,1000); else clearInterval(hiit.interval);
     renderMain();
   };
-  t.querySelector('#hiitReset').onclick = ()=>{
-    stopHiit();
-    hiit = {running:false, phase:'work', remaining:h.work, round:1, interval:null};
-    renderMain();
+  t.querySelector('#hiitReset').onclick=()=>{stopHiit();hiit={running:false,phase:'work',remaining:h.work,round:1,interval:null};renderMain();};
+  return wrap;
+}
+function hiitTick(){
+  const h=DAYS[5].hiit; hiit.remaining--;
+  if(hiit.remaining<=0){
+    if(hiit.phase==='work'){hiit.phase='recover';hiit.remaining=h.recover;}
+    else{
+      if(hiit.round>=h.rounds){stopHiit();hiit.phase='work';hiit.remaining=h.work;hiit.round=1;
+        const e=entryFor(activeIso);e.done=true;saveLog();render();return;}
+      hiit.round++;hiit.phase='work';hiit.remaining=h.work;
+    }
+  }
+  const p=document.getElementById('hiitPhase'); if(!p)return;
+  p.className='timer-phase '+hiit.phase;
+  p.textContent=hiit.phase==='work'?'Kerja Keras':'Pemulihan';
+  document.getElementById('hiitDisplay').textContent=fmtTime(hiit.remaining);
+  document.getElementById('hiitRound').textContent=`Ronde ${hiit.round} / ${h.rounds}`;
+}
+
+/* ================= TAB KALORI ================= */
+function renderCalories(){
+  const e=entryFor(activeIso), wrap=document.createElement('div');
+  const target=calTarget(), consumed=dayKcal(activeIso), prot=dayProtein(activeIso), pTarget=proteinTarget();
+  const remain=target-consumed, over=consumed>target;
+  const pct=Math.min(consumed/target,1), R=74, C=2*Math.PI*R;
+
+  /* ring */
+  const ring=document.createElement('div'); ring.className='ring-card';
+  ring.innerHTML=`
+    <div class="ring-wrap">
+      <svg width="172" height="172" viewBox="0 0 172 172">
+        <circle class="ring-bg" cx="86" cy="86" r="${R}" fill="none" stroke-width="13"/>
+        <circle class="ring-fg ${over?'over':''}" cx="86" cy="86" r="${R}" fill="none" stroke-width="13"
+          stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct)}"/>
+      </svg>
+      <div class="ring-center">
+        <span class="big">${consumed}</span>
+        <span class="of">dari ${target} kkal</span>
+        <span class="lbl">Asupan</span>
+      </div>
+    </div>
+    <div class="remain-line">${over
+      ? `Lebih <b class="over">${Math.abs(remain)}</b> kkal dari target`
+      : `Sisa <b>${remain}</b> kkal hari ini`}</div>
+    <div class="macro-row">
+      <div class="macro"><span class="k">Protein</span><span class="v">${prot}<small>/${pTarget}g</small></span>
+        <div class="macro-bar"><i style="width:${Math.min(100,pTarget?prot/pTarget*100:0)}%"></i></div></div>
+      <div class="macro"><span class="k">Item</span><span class="v">${e.food.length}</span>
+        <div class="macro-bar"><i style="width:0%"></i></div></div>
+      <div class="macro"><span class="k">Defisit</span><span class="v">${actualDeficit()}</span>
+        <div class="macro-bar"><i style="width:100%;background:var(--tape)"></i></div></div>
+    </div>`;
+  wrap.appendChild(ring);
+
+  /* form tambah */
+  const form=document.createElement('div'); form.className='card';
+  form.innerHTML=`
+    <div class="add-row">
+      <input type="text" id="fName" placeholder="Nama makanan" autocomplete="off">
+    </div>
+    <div class="add-row">
+      <input type="number" inputmode="numeric" id="fKcal" class="num" placeholder="kkal">
+      <input type="number" inputmode="numeric" id="fProt" class="num" placeholder="protein">
+      <button class="add-btn" id="fAdd" style="flex:1">Tambah</button>
+    </div>`;
+  wrap.appendChild(form);
+  const nm=form.querySelector('#fName'), kc=form.querySelector('#fKcal'), pp=form.querySelector('#fProt');
+  const addFood=()=>{
+    const name=nm.value.trim(), kcal=parseInt(kc.value,10), p=parseInt(pp.value,10)||0;
+    if(!name||!kcal||kcal<0) return;
+    e.food.push({name, kcal, p}); saveLog();
+    const ex=foods.findIndex(f=>f.name.toLowerCase()===name.toLowerCase());
+    if(ex>=0) foods.splice(ex,1);
+    foods.unshift({name, kcal, p}); foods=foods.slice(0,24); saveFoods();
+    render();
+    setTimeout(()=>{const n2=document.getElementById('fName'); if(n2)n2.focus();},0);
   };
+  form.querySelector('#fAdd').onclick=addFood;
+  [nm,kc,pp].forEach(el=>el.addEventListener('keydown',ev=>{if(ev.key==='Enter')addFood();}));
+
+  /* chips favorit */
+  if(foods.length){
+    const t=document.createElement('p'); t.className='sec-title'; t.textContent='Sering Dipakai — tap buat tambah';
+    wrap.appendChild(t);
+    const chips=document.createElement('div'); chips.className='chips'; chips.style.marginBottom='18px';
+    foods.forEach((f,i)=>{
+      const c=document.createElement('div'); c.className='chip';
+      c.innerHTML=`<span class="nm">${esc(f.name)}</span><span class="kc">${f.kcal}</span><span class="x">×</span>`;
+      c.querySelector('.nm').onclick=()=>{e.food.push({name:f.name,kcal:f.kcal,p:f.p||0});saveLog();render();};
+      c.querySelector('.kc').onclick=()=>{e.food.push({name:f.name,kcal:f.kcal,p:f.p||0});saveLog();render();};
+      c.querySelector('.x').onclick=ev=>{ev.stopPropagation();foods.splice(i,1);saveFoods();render();};
+      chips.appendChild(c);
+    });
+    wrap.appendChild(chips);
+  }
+
+  /* daftar hari ini */
+  const lt=document.createElement('p'); lt.className='sec-title';
+  lt.textContent=`Tercatat Hari Ini (${e.food.length})`;
+  wrap.appendChild(lt);
+  if(!e.food.length){
+    const em=document.createElement('div'); em.className='empty-note';
+    em.textContent='Belum ada catatan. Tambahin makanan pertama di kolom atas.';
+    em.style.marginBottom='20px'; wrap.appendChild(em);
+  } else {
+    const list=document.createElement('div'); list.style.marginBottom='20px';
+    e.food.forEach((f,i)=>{
+      const it=document.createElement('div'); it.className='food-item';
+      it.innerHTML=`<span class="nm">${esc(f.name)}</span>
+        ${f.p?`<span class="pr">${f.p}g P</span>`:''}
+        <span class="kc">${f.kcal}</span><button class="del">×</button>`;
+      it.querySelector('.del').onclick=()=>{e.food.splice(i,1);saveLog();render();};
+      list.appendChild(it);
+    });
+    wrap.appendChild(list);
+  }
+
+  /* setup */
+  const st=document.createElement('button'); st.className='setup-toggle';
+  st.innerHTML=`<span>Atur Target &amp; Data Badan</span><span>${setupOpen?'▲':'▼'}</span>`;
+  st.onclick=()=>{setupOpen=!setupOpen;render();};
+  wrap.appendChild(st);
+
+  const body=document.createElement('div'); body.className='setup-body'+(setupOpen?' open':'');
+  body.innerHTML=`
+    <div class="card">
+      <div class="field"><label>Jenis kelamin</label><div class="seg" id="segSex">
+        <button data-v="m" class="${profile.sex==='m'?'on':''}">Pria</button>
+        <button data-v="f" class="${profile.sex==='f'?'on':''}">Wanita</button></div></div>
+      <div class="field"><label>Usia (tahun)</label><input type="number" inputmode="numeric" id="pAge" value="${profile.age}"></div>
+      <div class="field"><label>Tinggi (cm)</label><input type="number" inputmode="numeric" id="pHeight" value="${profile.height}"></div>
+      <div class="field"><label>Berat saat ini (kg)</label><input type="number" inputmode="numeric" id="pWeight" value="${profile.weight}"></div>
+      <div class="field"><label>Berat target (kg)</label><input type="number" inputmode="numeric" id="pTarget" value="${profile.target}"></div>
+      <div class="field"><label>Tingkat aktivitas</label><div class="seg" id="segAct">
+        ${ACTIVITY.map((a,i)=>`<button data-v="${i}" class="${profile.act===i?'on':''}">${a.k}</button>`).join('')}</div>
+        <p style="font-size:11.5px;color:var(--chalk-dim);margin:8px 0 0;line-height:1.5">${ACTIVITY[profile.act].d}</p></div>
+      <div class="field" style="margin-bottom:6px"><label>Defisit harian — ${profile.deficit} kkal</label>
+        <input type="range" id="pDef" min="0" max="1000" step="50" value="${profile.deficit}"></div>
+      <div class="calc-out">
+        <div class="calc-line"><span>BMR (metabolisme dasar)</span><b>${bmr()}</b></div>
+        <div class="calc-line"><span>TDEE (berat stabil)</span><b>${tdee()}</b></div>
+        <div class="calc-line"><span>Defisit diterapkan</span><b>−${actualDeficit()}</b></div>
+        <div class="calc-line total"><span>Target harian</span><b>${calTarget()} kkal</b></div>
+      </div>
+      ${projection()}
+    </div>`;
+  wrap.appendChild(body);
+
+  body.querySelectorAll('#segSex button').forEach(b=>b.onclick=()=>{profile.sex=b.dataset.v;saveProfile();render();});
+  body.querySelectorAll('#segAct button').forEach(b=>b.onclick=()=>{profile.act=parseInt(b.dataset.v,10);saveProfile();render();});
+  const bindNum=(id,key,min,max)=>{
+    const el=body.querySelector(id); if(!el)return;
+    el.onchange=()=>{const v=parseInt(el.value,10); if(!isNaN(v)&&v>=min&&v<=max){profile[key]=v;saveProfile();render();} else {el.value=profile[key];}};
+  };
+  bindNum('#pAge','age',14,100); bindNum('#pHeight','height',120,230);
+  bindNum('#pWeight','weight',35,300); bindNum('#pTarget','target',35,300);
+  const rng=body.querySelector('#pDef');
+  if(rng) rng.onchange=()=>{profile.deficit=parseInt(rng.value,10);saveProfile();render();};
+
   return wrap;
 }
 
-function hiitTick(){
-  const h = DAYS[5].hiit;
-  hiit.remaining--;
-  if(hiit.remaining<=0){
-    if(hiit.phase==='work'){ hiit.phase='recover'; hiit.remaining=h.recover; }
-    else{
-      if(hiit.round>=h.rounds){
-        stopHiit();
-        hiit.phase='work'; hiit.remaining=h.work; hiit.round=1;
-        const e = entryFor(activeIso); e.done = true; saveLog();
-        render(); return;
-      }
-      hiit.round++; hiit.phase='work'; hiit.remaining=h.work;
-    }
+function projection(){
+  const def=actualDeficit();
+  const floored = tdee()-profile.deficit < MIN_TARGET;
+  let out='';
+  if(floored){
+    out+=`<div class="warn-box">Target ditahan di batas bawah ${MIN_TARGET} kkal. Defisit yang kamu minta bakal bikin asupan terlalu rendah — di titik itu massa otot ikut terbakar dan program jadi jauh lebih berat dijalani. Kalau progres melambat, lebih baik tambah aktivitas harian daripada memangkas makan lebih dalam.</div>`;
   }
-  const p=document.getElementById('hiitPhase'); if(!p) return;
-  p.className='timer-phase '+hiit.phase;
-  p.textContent = hiit.phase==='work'?'Kerja Keras':'Pemulihan';
-  document.getElementById('hiitDisplay').textContent = fmtTime(hiit.remaining);
-  document.getElementById('hiitRound').textContent = `Ronde ${hiit.round} / ${h.rounds}`;
+  if(def<=0) return out;
+  const perWeek=def*7/7700;
+  const gap=profile.weight-profile.target;
+  if(gap<=0) return out;
+  const weeks=Math.round(gap/perWeek);
+  const eta=addDays(new Date(),weeks*7);
+  out+=`<p style="font-size:12px;color:var(--chalk-dim);line-height:1.6;margin:12px 0 0">
+    Dengan defisit ini, laju turunnya sekitar <b style="color:var(--chalk);font-family:'IBM Plex Mono',monospace">${perWeek.toFixed(2)} kg/minggu</b> —
+    ${gap} kg butuh ±${weeks} minggu, jatuh sekitar ${MONTHS[eta.getMonth()]} ${eta.getFullYear()}.
+    Ini hitungan lurus di atas kertas; realitanya melambat seiring berat turun, jadi anggap perkiraan optimis, bukan janji.</p>`;
+  return out;
 }
 
-/* ============ REKAP / KALENDER ============ */
-function renderRecap(){
-  const wrap = document.createElement('div');
+/* ================= LEVEL ================= */
+function weightEntries(){
+  return Object.keys(weights).sort().map(s=>({s, kg:weights[s]}));
+}
+function latestWeight(){
+  const e=weightEntries();
+  return e.length ? e[e.length-1].kg : profile.startWeight;
+}
+function bestWeight(){
+  const e=weightEntries();
+  if(!e.length) return profile.startWeight;
+  return Math.min(profile.startWeight, ...e.map(x=>x.kg));
+}
+function levelThreshold(L){
+  const span=profile.startWeight-profile.target;
+  if(span<=0) return profile.target;
+  return profile.startWeight - span*(L-1)/(LEVELS.length-1);
+}
+function levelInfo(){
+  const span=profile.startWeight-profile.target;
+  const best=bestWeight();
+  if(span<=0) return {lv:LEVELS.length, pct:1, next:null, best};
+  const per=span/(LEVELS.length-1);
+  const lost=Math.max(0, profile.startWeight-best);
+  const lv=Math.min(LEVELS.length, Math.floor(lost/per+1e-9)+1);
+  if(lv>=LEVELS.length) return {lv:LEVELS.length, pct:1, next:null, best, per};
+  const into=lost-(lv-1)*per;
+  return {lv, pct:Math.max(0,Math.min(1,into/per)), next:levelThreshold(lv+1), best, per};
+}
 
-  /* -- navigasi bulan -- */
-  const nav = document.createElement('div');
-  nav.className='month-nav';
-  nav.innerHTML = `
-    <button class="arrow" id="prevMonth">‹</button>
+/* ================= TAB PROFIL ================= */
+function renderProfile(){
+  const wrap=document.createElement('div');
+  const info=levelInfo(), lv=info.lv, maxed=lv>=LEVELS.length;
+  const cur=latestWeight(), best=info.best;
+  const R2=42, C2=2*Math.PI*R2;
+
+  const hero=document.createElement('div'); hero.className='lv-hero';
+  hero.innerHTML=`
+    <div class="lv-badge">
+      <svg width="92" height="92" viewBox="0 0 92 92" style="transform:rotate(-90deg)">
+        <circle cx="46" cy="46" r="${R2}" fill="none" stroke="var(--panel-2)" stroke-width="6"/>
+        <circle cx="46" cy="46" r="${R2}" fill="none" stroke="var(--tape)" stroke-width="6" stroke-linecap="round"
+          stroke-dasharray="${C2}" stroke-dashoffset="${C2*(1-info.pct)}"/>
+      </svg>
+      <span class="num">${lv}</span>
+      <span class="cap">Level</span>
+    </div>
+    <div class="lv-name">${LEVELS[lv-1]}</div>
+    <div class="lv-sub">${maxed
+      ? `Kamu sampai di ${profile.target} kg. Dua puluh level tuntas — sekarang tantangannya beda: mempertahankan.`
+      : `Level ${lv+1} terbuka di <b style="color:var(--chalk)">${info.next.toFixed(1)} kg</b>`}</div>
+    ${maxed?'':`
+    <div class="lv-track"><i style="width:${(info.pct*100).toFixed(1)}%"></i></div>
+    <div class="lv-track-lbl"><span>Lv ${lv}</span><b>${Math.round(info.pct*100)}%</b><span>Lv ${lv+1}</span></div>`}`;
+  wrap.appendChild(hero);
+
+  /* berat + grafik */
+  const wt=document.createElement('div'); wt.className='wt-card';
+  const lostTotal=profile.startWeight-best;
+  const toGo=Math.max(0, best-profile.target);
+  wt.innerHTML=`
+    <div class="wt-now"><span class="v">${cur.toFixed(1)}</span><span class="u">kg</span></div>
+    <div class="wt-delta">${lostTotal>0
+      ? `Turun <b>${lostTotal.toFixed(1)} kg</b> dari ${profile.startWeight} kg · sisa ${toGo.toFixed(1)} kg ke target`
+      : `Titik awal ${profile.startWeight} kg · target ${profile.target} kg`}</div>
+    <div id="sparkHost"></div>
+    <div class="add-row">
+      <input type="number" inputmode="decimal" step="0.1" id="wKg" placeholder="Berat hari ini (kg)">
+    </div>
+    <button class="add-btn" id="wAdd">Catat Berat</button>
+    <p style="font-size:11.5px;color:var(--chalk-dim);line-height:1.55;margin:12px 0 0">
+      Timbang seminggu sekali di hari, jam, dan kondisi yang sama — misal tiap Senin pagi sebelum sarapan.
+      Berat harian naik-turun 1-2 kg karena air dan isi perut, jadi menimbang tiap hari cuma bikin panik tanpa info tambahan.</p>`;
+  wrap.appendChild(wt);
+
+  /* sparkline */
+  const ents=weightEntries();
+  const host=wt.querySelector('#sparkHost');
+  if(ents.length>=2){
+    const W=300,H=76,P=8;
+    const vals=ents.map(e=>e.kg);
+    const lo=Math.min(profile.target,...vals), hi=Math.max(...vals);
+    const rng=(hi-lo)||1;
+    const X=i=>P+(W-2*P)*(ents.length===1?0.5:i/(ents.length-1));
+    const Y=v=>P+(H-2*P)*(1-(v-lo)/rng);
+    const pts=ents.map((e,i)=>`${X(i).toFixed(1)},${Y(e.kg).toFixed(1)}`);
+    const gy=Y(profile.target).toFixed(1);
+    host.innerHTML=`<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+      <path class="ar" d="M${X(0).toFixed(1)},${H-P} L${pts.join(' L')} L${X(ents.length-1).toFixed(1)},${H-P} Z"/>
+      <line class="goal" x1="${P}" y1="${gy}" x2="${W-P}" y2="${gy}"/>
+      <path class="ln" d="M${pts.join(' L')}"/>
+      <circle cx="${X(ents.length-1).toFixed(1)}" cy="${Y(vals[vals.length-1]).toFixed(1)}" r="3.5"/>
+    </svg>`;
+  } else {
+    host.innerHTML=`<div class="empty-note" style="margin-bottom:14px">Catat berat minimal 2 kali buat lihat grafik trennya.</div>`;
+  }
+
+  const kgIn=wt.querySelector('#wKg');
+  const addW=()=>{
+    const v=parseFloat(kgIn.value);
+    if(isNaN(v)||v<30||v>350) return;
+    weights[TODAY_ISO]=Math.round(v*10)/10;
+    profile.weight=Math.round(v); saveWeights(); saveProfile(); render();
+  };
+  wt.querySelector('#wAdd').onclick=addW;
+  kgIn.addEventListener('keydown',ev=>{if(ev.key==='Enter')addW();});
+
+  /* statistik usaha */
+  let totalSesi=0, totalKcalDays=0;
+  Object.keys(log).forEach(s=>{
+    if(s>TODAY_ISO)return;
+    if(statusFor(s)==='complete')totalSesi++;
+    if(hasFood(s))totalKcalDays++;
+  });
+  const st=document.createElement('p'); st.className='sec-title'; st.textContent='Total Usaha';
+  wrap.appendChild(st);
+  const kp=document.createElement('div'); kp.className='kpi-grid';
+  kp.innerHTML=`<div class="kpi accent"><span class="k">Sesi Selesai</span><span class="v">${totalSesi}</span></div>
+    <div class="kpi leaf"><span class="k">Hari Kalori Tercatat</span><span class="v">${totalKcalDays}</span></div>
+    <div class="kpi"><span class="k">Penimbangan</span><span class="v">${ents.length}</span></div>
+    <div class="kpi"><span class="k">Level Terbuka</span><span class="v">${lv}<small> / 20</small></span></div>`;
+  wrap.appendChild(kp);
+
+  /* roadmap */
+  const rt=document.createElement('p'); rt.className='sec-title'; rt.textContent='Peta 20 Level';
+  wrap.appendChild(rt);
+  const list=document.createElement('div'); list.className='lv-list';
+  LEVELS.forEach((nm,i)=>{
+    const L=i+1, th=levelThreshold(L);
+    const row=document.createElement('div');
+    row.className='lv-row'+(L<lv?' done':(L===lv?' current':''));
+    row.innerHTML=`<span class="no">${L}</span><span class="nm">${nm}</span>
+      <span class="kg">${th.toFixed(1)} kg</span>
+      <span class="tick">${L<lv?'✓':(L===lv?'●':'')}</span>`;
+    list.appendChild(row);
+  });
+  wrap.appendChild(list);
+
+  /* pengaturan level */
+  const stg=document.createElement('button'); stg.className='setup-toggle';
+  stg.innerHTML=`<span>Atur Titik Awal &amp; Target</span><span>${setupOpen2?'▲':'▼'}</span>`;
+  stg.onclick=()=>{setupOpen2=!setupOpen2;render();};
+  wrap.appendChild(stg);
+
+  const body=document.createElement('div'); body.className='setup-body'+(setupOpen2?' open':'');
+  body.innerHTML=`<div class="card">
+    <div class="field"><label>Berat awal (titik mulai Level 1)</label>
+      <input type="number" inputmode="numeric" id="sStart" value="${profile.startWeight}"></div>
+    <div class="field" style="margin-bottom:8px"><label>Berat target (Level 20)</label>
+      <input type="number" inputmode="numeric" id="sGoal" value="${profile.target}"></div>
+    <p style="font-size:11.5px;color:var(--chalk-dim);line-height:1.55;margin:0">
+      Level dihitung dari berat terendah yang pernah kamu catat, bukan berat terakhir.
+      Jadi kalau minggu ini naik sedikit, level kamu gak ikut turun — yang sudah kamu capai tetap tercatat.</p>
+    </div>`;
+  wrap.appendChild(body);
+  const bn=(id,key,min,max)=>{
+    const el=body.querySelector(id); if(!el)return;
+    el.onchange=()=>{const v=parseInt(el.value,10);
+      if(!isNaN(v)&&v>=min&&v<=max){profile[key]=v;saveProfile();render();} else el.value=profile[key];};
+  };
+  bn('#sStart','startWeight',35,300); bn('#sGoal','target',35,300);
+
+  return wrap;
+}
+
+/* ================= REKAP ================= */
+function renderRecap(){
+  const wrap=document.createElement('div');
+  const nav=document.createElement('div'); nav.className='month-nav';
+  nav.innerHTML=`<button class="arrow" id="prevMonth">‹</button>
     <span class="month-label">${MONTHS[calMonth]} ${calYear}</span>
     <button class="arrow" id="nextMonth">›</button>`;
   wrap.appendChild(nav);
 
-  /* -- grid kalender -- */
-  const head = document.createElement('div');
-  head.className='cal-head';
-  head.innerHTML = DAYS.map(d=>`<span>${d.label}</span>`).join('');
+  const modeSel=document.createElement('div'); modeSel.className='cal-mode';
+  modeSel.innerHTML=`<button data-m="latihan" class="${calMode==='latihan'?'on':''}">Latihan</button>
+    <button data-m="kalori" class="${calMode==='kalori'?'on':''}">Kalori</button>`;
+  modeSel.querySelectorAll('button').forEach(b=>b.onclick=()=>{calMode=b.dataset.m;render();});
+  wrap.appendChild(modeSel);
+
+  const head=document.createElement('div'); head.className='cal-head';
+  head.innerHTML=DAYS.map(d=>`<span>${d.label}</span>`).join('');
   wrap.appendChild(head);
 
-  const grid = document.createElement('div');
-  grid.className='cal-grid';
-  const first = new Date(calYear, calMonth, 1);
-  const lead = dayIdx(first);
-  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
-  for(let i=0;i<lead;i++){
-    const b=document.createElement('div'); b.className='cell blank'; grid.appendChild(b);
-  }
-  for(let n=1;n<=daysInMonth;n++){
-    const s = iso(new Date(calYear, calMonth, n));
-    const st = statusFor(s);
-    const cell = document.createElement('div');
-    cell.className = 'cell st-'+st + (s===TODAY_ISO?' today':'');
-    cell.innerHTML = `<span class="n">${n}</span><span class="bar"></span>`;
-    cell.onclick = ()=>{
-      activeIso = s; weekStart = startOfWeek(parseIso(s));
-      view='workout'; stopHiit(); render();
-      window.scrollTo({top:0});
-    };
+  const grid=document.createElement('div'); grid.className='cal-grid';
+  const lead=dayIdx(new Date(calYear,calMonth,1));
+  const dim=new Date(calYear,calMonth+1,0).getDate();
+  for(let i=0;i<lead;i++){const b=document.createElement('div');b.className='cell blank';grid.appendChild(b);}
+  for(let n=1;n<=dim;n++){
+    const s=iso(new Date(calYear,calMonth,n));
+    const cls = calMode==='kalori' ? 'kc-'+kcalStatus(s) : 'st-'+statusFor(s);
+    const cell=document.createElement('div');
+    cell.className='cell '+cls+(s===TODAY_ISO?' today':'');
+    cell.innerHTML=`<span class="n">${n}</span><span class="bar"></span>`;
+    cell.onclick=()=>{activeIso=s;weekStart=startOfWeek(parseIso(s));
+      view=calMode==='kalori'?'calories':'workout';stopHiit();render();window.scrollTo({top:0});};
     grid.appendChild(cell);
   }
   wrap.appendChild(grid);
 
-  /* -- legenda -- */
-  const legend = document.createElement('div');
-  legend.className='legend';
-  legend.innerHTML = `
-    <div><span class="sw" style="background:var(--tape)"></span>Beres</div>
-    <div><span class="sw" style="background:var(--steel)"></span>Setengah jalan</div>
-    <div><span class="sw" style="background:var(--rust)"></span>Bolong</div>
-    <div><span class="sw" style="background:var(--line)"></span>Rest / belum lewat</div>`;
+  const legend=document.createElement('div'); legend.className='legend';
+  legend.innerHTML = calMode==='kalori'
+    ? `<div><span class="sw" style="background:var(--leaf)"></span>Sesuai / di bawah target</div>
+       <div><span class="sw" style="background:var(--steel)"></span>Lewat sedikit (&lt;250)</div>
+       <div><span class="sw" style="background:var(--rust)"></span>Lewat jauh</div>
+       <div><span class="sw" style="background:var(--line)"></span>Belum dicatat</div>`
+    : `<div><span class="sw" style="background:var(--tape)"></span>Beres</div>
+       <div><span class="sw" style="background:var(--steel)"></span>Setengah jalan</div>
+       <div><span class="sw" style="background:var(--rust)"></span>Bolong</div>
+       <div><span class="sw" style="background:var(--line)"></span>Rest / belum lewat</div>`;
   wrap.appendChild(legend);
 
-  /* -- statistik bulan ini -- */
-  let complete=0, partial=0, missed=0, scheduled=0;
-  for(let n=1;n<=daysInMonth;n++){
-    const s = iso(new Date(calYear, calMonth, n)), st = statusFor(s);
-    if(st==='rest'||st==='future') continue;
-    scheduled++;
-    if(st==='complete') complete++;
-    else if(st==='partial') partial++;
-    else missed++;
+  /* --- statistik latihan --- */
+  let comp=0,part=0,miss=0,sched=0;
+  for(let n=1;n<=dim;n++){
+    const s=iso(new Date(calYear,calMonth,n)), st=statusFor(s);
+    if(st==='rest'||st==='future')continue;
+    sched++; if(st==='complete')comp++; else if(st==='partial')part++; else miss++;
   }
-  const rate = scheduled ? Math.round((complete/scheduled)*100) : 0;
+  const t1=document.createElement('p'); t1.className='sec-title';
+  t1.textContent=`Latihan — ${MONTHS[calMonth]}`; wrap.appendChild(t1);
+  const k1=document.createElement('div'); k1.className='kpi-grid';
+  k1.innerHTML=`<div class="kpi accent"><span class="k">Sesi Beres</span><span class="v">${comp}<small> / ${sched}</small></span></div>
+    <div class="kpi"><span class="k">Konsistensi</span><span class="v">${sched?Math.round(comp/sched*100):0}<small>%</small></span></div>
+    <div class="kpi"><span class="k">Setengah Jalan</span><span class="v">${part}</span></div>
+    <div class="kpi warn"><span class="k">Bolong</span><span class="v">${miss}</span></div>`;
+  wrap.appendChild(k1);
 
-  const kpiTitle = document.createElement('p');
-  kpiTitle.className='sec-title';
-  kpiTitle.textContent = `Statistik ${MONTHS[calMonth]}`;
-  wrap.appendChild(kpiTitle);
+  /* --- statistik kalori --- */
+  let logged=0,sum=0,onTarget=0,sumProt=0,overDays=0;
+  for(let n=1;n<=dim;n++){
+    const s=iso(new Date(calYear,calMonth,n));
+    if(s>TODAY_ISO||!hasFood(s))continue;
+    logged++; sum+=dayKcal(s); sumProt+=dayProtein(s);
+    const st=kcalStatus(s);
+    if(st==='under')onTarget++; if(st==='over')overDays++;
+  }
+  const avg=logged?Math.round(sum/logged):0, avgP=logged?Math.round(sumProt/logged):0;
+  const t2=document.createElement('p'); t2.className='sec-title';
+  t2.textContent=`Kalori — ${MONTHS[calMonth]}`; wrap.appendChild(t2);
+  const k2=document.createElement('div'); k2.className='kpi-grid';
+  k2.innerHTML=`<div class="kpi leaf"><span class="k">Rata-rata Asupan</span><span class="v">${avg}<small> kkal</small></span></div>
+    <div class="kpi"><span class="k">Hari Tercatat</span><span class="v">${logged}<small> / ${dim}</small></span></div>
+    <div class="kpi accent"><span class="k">Sesuai Target</span><span class="v">${onTarget}<small> hari</small></span></div>
+    <div class="kpi"><span class="k">Rata-rata Protein</span><span class="v">${avgP}<small>g</small></span></div>`;
+  wrap.appendChild(k2);
 
-  const kpi = document.createElement('div');
-  kpi.className='kpi-grid';
-  kpi.innerHTML = `
-    <div class="kpi accent"><span class="k">Sesi Beres</span><span class="v">${complete}<small> / ${scheduled}</small></span></div>
-    <div class="kpi"><span class="k">Tingkat Konsistensi</span><span class="v">${rate}<small>%</small></span></div>
-    <div class="kpi"><span class="k">Setengah Jalan</span><span class="v">${partial}</span></div>
-    <div class="kpi warn"><span class="k">Bolong</span><span class="v">${missed}</span></div>`;
-  wrap.appendChild(kpi);
+  if(logged>=3){
+    const gapK=calTarget()-avg, note=document.createElement('div');
+    note.className='simple-card'; note.style.marginBottom='22px';
+    let msg;
+    if(logged<dim*0.5)
+      msg=`Baru ${logged} hari tercatat bulan ini. Angka rata-rata di atas belum bisa dipercaya penuh sampai pencatatannya lebih rutin — hari yang lupa dicatat biasanya justru hari yang paling banyak makan.`;
+    else if(gapK>=0)
+      msg=`Rata-rata asupan kamu <b style="color:var(--leaf)">${avg} kkal</b>, masih di bawah target ${calTarget()} kkal. Ini arah yang benar. Yang perlu dicek berikutnya: apakah berat badan beneran ikut turun — kalau 3 minggu gak gerak sama sekali, kemungkinan estimasi kalori makanannya kekecilan, bukan targetnya yang salah.`;
+    else
+      msg=`Rata-rata asupan kamu <b style="color:var(--rust)">${avg} kkal</b>, lewat ${Math.abs(gapK)} kkal dari target harian. Gak perlu panik — ${overDays} hari yang kelewat jauh biasanya cukup diperbaiki dengan mengganti satu-dua item paling besar, bukan dengan memangkas semuanya.`;
+    note.innerHTML=`<p style="margin-bottom:0">${msg}</p>`;
+    wrap.appendChild(note);
+  }
 
-  /* -- streak (sepanjang riwayat) -- */
-  const st2 = document.createElement('p');
-  st2.className='sec-title';
-  st2.textContent = 'Runtutan Saat Ini';
-  wrap.appendChild(st2);
-
-  let streak=0, cur=new Date();
-  if(statusFor(TODAY_ISO)!=='complete' && DAYS[dayIdx(cur)].type!=='rest') cur=addDays(cur,-1);
+  /* --- streak --- */
+  const t3=document.createElement('p'); t3.className='sec-title';
+  t3.textContent='Runtutan Latihan'; wrap.appendChild(t3);
+  let streak=0,cur=new Date();
+  if(statusFor(TODAY_ISO)!=='complete'&&DAYS[dayIdx(cur)].type!=='rest')cur=addDays(cur,-1);
   for(let i=0;i<400;i++){
-    const s = iso(cur), st = statusFor(s);
-    if(st==='rest'){ cur=addDays(cur,-1); continue; }
-    if(st==='complete'){ streak++; cur=addDays(cur,-1); continue; }
+    const s=iso(cur), st=statusFor(s);
+    if(st==='rest'){cur=addDays(cur,-1);continue;}
+    if(st==='complete'){streak++;cur=addDays(cur,-1);continue;}
     break;
   }
-  const streakCard = document.createElement('div');
-  streakCard.className='simple-card';
-  streakCard.style.marginBottom='22px';
-  streakCard.innerHTML = `<p style="margin-bottom:0">${
-    streak>0
-      ? `<b style="color:var(--tape);font-family:'Oswald',sans-serif;font-size:22px">${streak} sesi</b> beruntun tanpa bolong. Hari rest gak memutus hitungan ini.`
-      : `Belum ada runtutan aktif. Beresin satu sesi penuh hari ini buat mulai lagi — gak apa-apa mulai dari nol.`
-  }</p>`;
-  wrap.appendChild(streakCard);
+  const sc=document.createElement('div'); sc.className='simple-card'; sc.style.marginBottom='22px';
+  sc.innerHTML=`<p style="margin-bottom:0">${streak>0
+    ? `<b style="color:var(--tape);font-family:'Oswald',sans-serif;font-size:22px">${streak} sesi</b> beruntun tanpa bolong. Hari rest gak memutus hitungan ini.`
+    : `Belum ada runtutan aktif. Beresin satu sesi penuh hari ini buat mulai lagi — gak apa-apa mulai dari nol.`}</p>`;
+  wrap.appendChild(sc);
 
-  /* -- daftar hari bolong -- */
-  const listTitle = document.createElement('p');
-  listTitle.className='sec-title';
-  listTitle.textContent = 'Yang Kelewat (30 hari terakhir)';
-  wrap.appendChild(listTitle);
-
-  const list = document.createElement('div');
-  list.className='miss-list';
-  const items = [];
-  for(let i=1;i<=30;i++){
-    const dt = addDays(new Date(), -i), s = iso(dt), st = statusFor(s);
-    if(st==='missed'||st==='partial') items.push({s, dt, st, r:ratioFor(s)});
-  }
-  if(!items.length){
-    const empty=document.createElement('div');
-    empty.className='empty-note';
-    empty.textContent='Bersih. Gak ada sesi yang kelewat dalam 30 hari terakhir.';
-    list.appendChild(empty);
-  } else {
-    items.forEach(it=>{
-      const el=document.createElement('div');
-      el.className='miss-item'+(it.st==='partial'?' partial':'');
-      el.innerHTML = `
-        <span class="date">${it.dt.getDate()} ${MONTHS_SHORT[it.dt.getMonth()]}</span>
-        <span class="what">${DAYS[dayIdx(it.dt)].focus}</span>
-        <span class="pct mono">${Math.round(it.r*100)}%</span>`;
-      el.onclick = ()=>{
-        activeIso = it.s; weekStart = startOfWeek(it.dt);
-        view='workout'; stopHiit(); render(); window.scrollTo({top:0});
-      };
-      list.appendChild(el);
-    });
-  }
-  wrap.appendChild(list);
-
-  /* -- reset -- */
-  const reset = document.createElement('button');
-  reset.className='danger-btn';
-  reset.textContent='Hapus semua riwayat latihan';
-  reset.onclick = ()=>{
-    if(confirm('Hapus semua riwayat latihan? Tindakan ini gak bisa dibatalkan.')){
-      log={}; saveLog(); render();
-    }
-  };
+  const reset=document.createElement('button'); reset.className='danger-btn';
+  reset.textContent='Hapus semua riwayat (latihan + kalori)';
+  reset.onclick=()=>{if(confirm('Hapus semua riwayat latihan dan catatan kalori? Gak bisa dibatalkan.')){log={};saveLog();render();}};
   wrap.appendChild(reset);
 
-  nav.querySelector('#prevMonth').onclick = ()=>{
-    calMonth--; if(calMonth<0){calMonth=11;calYear--;} render();
-  };
-  nav.querySelector('#nextMonth').onclick = ()=>{
-    calMonth++; if(calMonth>11){calMonth=0;calYear++;} render();
-  };
+  nav.querySelector('#prevMonth').onclick=()=>{calMonth--;if(calMonth<0){calMonth=11;calYear--;}render();};
+  nav.querySelector('#nextMonth').onclick=()=>{calMonth++;if(calMonth>11){calMonth=0;calYear++;}render();};
   return wrap;
 }
 
-/* ============ RENDER ============ */
+/* ================= RENDER ================= */
 function renderMain(){
-  const main = document.getElementById('mainContent');
-  main.innerHTML='';
-  if(view==='recap'){ main.appendChild(renderRecap()); return; }
-  const d = DAYS[dayIdx(parseIso(activeIso))];
-  if(d.type==='strength') main.appendChild(renderStrength(d));
-  else if(d.type==='cardio') main.appendChild(renderCardio(d));
-  else if(d.type==='recovery') main.appendChild(renderRecovery(d));
-  else if(d.type==='rest') main.appendChild(renderRest());
-  else if(d.type==='hiit') main.appendChild(renderHiit(d));
+  const m=document.getElementById('mainContent'); m.innerHTML='';
+  if(view==='recap'){m.appendChild(renderRecap());return;}
+  if(view==='profile'){m.appendChild(renderProfile());return;}
+  if(view==='calories'){m.appendChild(renderCalories());return;}
+  const d=DAYS[dayIdx(parseIso(activeIso))];
+  if(d.type==='strength')m.appendChild(renderStrength(d));
+  else if(d.type==='cardio')m.appendChild(renderCardio(d));
+  else if(d.type==='recovery')m.appendChild(renderRecovery(d));
+  else if(d.type==='rest')m.appendChild(renderRest());
+  else if(d.type==='hiit')m.appendChild(renderHiit(d));
 }
 function render(){
-  clearRestTimers();
-  const isRecap = view==='recap';
-  document.getElementById('weekNav').style.display = isRecap?'none':'flex';
-  document.getElementById('dayHeader').style.display = isRecap?'none':'block';
-  document.getElementById('kicker').textContent = isRecap ? 'Riwayat & konsistensi' : '175cm · 105 → 85kg';
-  document.getElementById('brandName').textContent = isRecap ? 'Rekap' : 'Program Gym';
-  document.querySelectorAll('#bottomNav button').forEach(b=>{
-    b.classList.toggle('active', b.dataset.view===view);
-  });
-  if(!isRecap){ renderWeekStrip(); renderDayHeader(); }
+  clearRest();
+  const bare = view==='recap'||view==='profile';
+  document.getElementById('weekNav').style.display=bare?'none':'flex';
+  document.getElementById('dayHeader').style.display=bare?'none':'block';
+  const li=levelInfo();
+  document.getElementById('kicker').textContent =
+    view==='recap'?'Riwayat & konsistensi'
+    : view==='profile'?`Level ${li.lv} dari 20`
+    : view==='calories'?`Target ${calTarget()} kkal/hari`
+    : `${profile.height}cm · ${latestWeight().toFixed(1)} → ${profile.target}kg`;
+  document.getElementById('brandName').textContent =
+    view==='recap'?'Rekap' : view==='profile'?'Profil' : view==='calories'?'Kalori':'Program Gym';
+  document.querySelectorAll('#bottomNav button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
+  if(!bare){renderWeekStrip();renderDayHeader();}
   renderMain();
 }
 
-/* ============ EVENT ============ */
-document.getElementById('prevWeek').onclick = ()=>{ weekStart=addDays(weekStart,-7); activeIso=iso(weekStart); stopHiit(); render(); };
-document.getElementById('nextWeek').onclick = ()=>{ weekStart=addDays(weekStart,7); activeIso=iso(weekStart); stopHiit(); render(); };
+/* ================= EVENTS ================= */
+document.getElementById('prevWeek').onclick=()=>{weekStart=addDays(weekStart,-7);activeIso=iso(weekStart);stopHiit();render();};
+document.getElementById('nextWeek').onclick=()=>{weekStart=addDays(weekStart,7);activeIso=iso(weekStart);stopHiit();render();};
 document.querySelectorAll('#bottomNav button').forEach(b=>{
-  b.onclick = ()=>{
-    view = b.dataset.view;
-    if(view==='recap'){ const d=parseIso(activeIso); calMonth=d.getMonth(); calYear=d.getFullYear(); }
-    stopHiit(); render(); window.scrollTo({top:0});
-  };
+  b.onclick=()=>{view=b.dataset.view;
+    if(view==='recap'){const d=parseIso(activeIso);calMonth=d.getMonth();calYear=d.getFullYear();}
+    stopHiit();render();window.scrollTo({top:0});};
 });
-document.getElementById('infoBtn').onclick = ()=> document.getElementById('modalBackdrop').classList.add('show');
-document.getElementById('modalClose').onclick = ()=> document.getElementById('modalBackdrop').classList.remove('show');
-document.getElementById('modalBackdrop').onclick = e=>{ if(e.target.id==='modalBackdrop') e.currentTarget.classList.remove('show'); };
+document.getElementById('infoBtn').onclick=()=>document.getElementById('modalBackdrop').classList.add('show');
+document.getElementById('modalClose').onclick=()=>document.getElementById('modalBackdrop').classList.remove('show');
+document.getElementById('modalBackdrop').onclick=e=>{if(e.target.id==='modalBackdrop')e.currentTarget.classList.remove('show');};
 
-loadLog();
-hiit.remaining = DAYS[5].hiit.work;
+load();
+hiit.remaining=DAYS[5].hiit.work;
 render();
 </script>
 </body>
